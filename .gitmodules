@@ -1,0 +1,3 @@
+[submodule "Plugins/MultiplayerSessions"]
+	path = Plugins/MultiplayerSessions
+	url = git@github.com:Lazarus-glhf/MultiplayerSessions.git
