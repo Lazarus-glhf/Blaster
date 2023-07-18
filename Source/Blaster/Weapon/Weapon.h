@@ -24,6 +24,7 @@ class BLASTER_API AWeapon : public AActor
 public:	
 	AWeapon();
 	virtual void Tick(float DeltaTime) override;
+	void ShowPickupWidget(bool bShowWidget);
 
 protected:
 	virtual void BeginPlay() override;
@@ -38,10 +39,8 @@ protected:
 		const FHitResult& SweepResult
 	);
 
-	UFUNCTION()
-	virtual void OnSphereStopOverlap(
-		
-		);
+	// UFUNCTION()
+	// virtual void OnSphereStopOverlap();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
