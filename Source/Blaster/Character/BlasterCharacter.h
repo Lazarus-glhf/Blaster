@@ -15,7 +15,7 @@ class BLASTER_API ABlasterCharacter : public ACharacter
 public:
 	ABlasterCharacter();
 
-	// Input
+	//---------- Input-----------------
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
 
@@ -28,14 +28,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* EquipAction;
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void EquipWeapon(const FInputActionValue& Value);
 	virtual void Jump() override;
-
-public:
+	//---------- Input-----------------
+	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PostInitializeComponents() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -52,6 +57,9 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
 	class AWeapon* OverlappingWeapon;
+
+	UPROPERTY(VisibleAnywhere)
+	class UCombatComponent* Combat;
 
 	UFUNCTION()
 	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);

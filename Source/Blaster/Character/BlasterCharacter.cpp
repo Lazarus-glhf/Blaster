@@ -4,6 +4,7 @@
 #include "BlasterCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Blaster/BlasterComponent/CombatComponent.h"
 #include "Blaster/Weapon/Weapon.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
@@ -29,6 +30,9 @@ ABlasterCharacter::ABlasterCharacter()
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
 	OverheadWidget->SetupAttachment(RootComponent);
+
+	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	Combat->SetIsReplicated(true);
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -37,6 +41,15 @@ void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 	// 仅复制到拥有 Character 的 Client, 服务器无法触发
 	DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon, COND_OwnerOnly);
+}
+
+void ABlasterCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	if (Combat)
+	{
+		Combat->Character = this;
+	}
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -57,6 +70,26 @@ void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+// ------------Set Player Input------------------
+void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	// Bind actions
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		// Jump
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ThisClass::Jump);
+
+		// Moving
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
+
+		// Looking
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
+
+		// EquipWeapon
+		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Started, this, &ThisClass::EquipWeapon);
+	}
 }
 
 void ABlasterCharacter::Move(const FInputActionValue& Value)
@@ -80,26 +113,20 @@ void ABlasterCharacter::Look(const FInputActionValue& Value)
 	AddControllerPitchInput(LookRotation.Y);
 }
 
+void ABlasterCharacter::EquipWeapon(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString(TEXT("EquipWeapon")));
+	if (Combat && HasAuthority())
+	{
+		Combat->EquipWeapon(OverlappingWeapon);
+	}
+}
+
 void ABlasterCharacter::Jump()
 {
 	Super::Jump();
 }
-
-void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	// Bind actions
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		// Jump
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ThisClass::Jump);
-
-		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
-
-		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
-	}
-}
+// ------------Set Player Input------------------
 
 void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 {
