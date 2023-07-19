@@ -39,8 +39,12 @@ protected:
 		const FHitResult& SweepResult
 	);
 
-	// UFUNCTION()
-	// virtual void OnSphereStopOverlap();
+	UFUNCTION()
+	virtual void OnSphereEndOverlap(
+		UPrimitiveComponent* OverlapComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
