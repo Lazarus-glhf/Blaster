@@ -72,7 +72,7 @@ void ABlasterCharacter::Tick(float DeltaTime)
 
 }
 
-// ------------Set Player Input------------------
+// ------------Set Player Input Begin------------------
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Bind actions
@@ -115,10 +115,16 @@ void ABlasterCharacter::Look(const FInputActionValue& Value)
 
 void ABlasterCharacter::EquipWeapon(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString(TEXT("EquipWeapon")));
-	if (Combat && HasAuthority())
+	if (Combat)
 	{
-		Combat->EquipWeapon(OverlappingWeapon);
+		if (HasAuthority())
+		{
+			Combat->EquipWeapon(OverlappingWeapon);	
+		}
+		else
+		{
+			ServerEquipButtonPress();
+		}
 	}
 }
 
@@ -126,7 +132,7 @@ void ABlasterCharacter::Jump()
 {
 	Super::Jump();
 }
-// ------------Set Player Input------------------
+// ------------Set Player Input End------------------
 
 void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 {
@@ -154,5 +160,13 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 	if (LastWeapon)
 	{
 		LastWeapon->ShowPickupWidget(false);
+	}
+}
+
+void ABlasterCharacter::ServerEquipButtonPress_Implementation()
+{
+	if (Combat)
+	{
+		Combat->EquipWeapon(OverlappingWeapon);
 	}
 }
