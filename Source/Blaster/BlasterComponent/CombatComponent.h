@@ -26,5 +26,7 @@ private:
 	
 	UPROPERTY(Replicated)
 	AWeapon* EquippedWeapon;
-		
+
+public:
+	
 };
