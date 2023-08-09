@@ -1,6 +1,7 @@
 .vs
 .vscofig
 .idea
+clean-cache.bat
 /Plugins/Developer/RiderLink
 /Binaries/
 /Build
