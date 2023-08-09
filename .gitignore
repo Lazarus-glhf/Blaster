@@ -1,6 +1,7 @@
 .vs
 .vscofig
 .idea
+/Plugins/Developer/RiderLink
 /Binaries/
 /Build
 /Saved/
