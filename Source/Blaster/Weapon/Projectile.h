@@ -13,12 +13,14 @@ class BLASTER_API AProjectile : public AActor
 	
 public:	
 	AProjectile();
+	virtual void Tick(float DeltaTime) override;
+	virtual void Destroyed() override;
 
 protected:
 	virtual void BeginPlay() override;
 
-public:	
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -30,6 +32,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* Tracer;
 
-	UPROPERTY()
-	class UNiagaraComponent* TracerComponent;
+	UPROPERTY(EditAnywhere)
+	class UNiagaraSystem* ImpactParticles;
+
+	UPROPERTY(EditAnywhere)
+	class USoundCue* ImpactSound;
 };

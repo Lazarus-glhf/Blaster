@@ -6,6 +6,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -33,7 +35,7 @@ void AProjectile::BeginPlay()
 	// GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Green, FString::Printf(TEXT("%f, %f, %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z));
 	if (Tracer)
 	{
-		TracerComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+		UNiagaraFunctionLibrary::SpawnSystemAttached(
 			Tracer,
 			CollisionBox,
 			FName(),
@@ -43,11 +45,34 @@ void AProjectile::BeginPlay()
 			false
 		);
 	}
+
+	if (HasAuthority())
+	{
+		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+	}
 }
 
 void AProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
+void AProjectile::Destroyed()
+{
+	Super::Destroyed();
+	
+	if (ImpactParticles)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactParticles, GetActorLocation(), GetActorRotation());
+	}
+	if (ImpactSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	}
+}
+
+void AProjectile::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	// TODO Deal with health and damage
+	Destroy();
+}
