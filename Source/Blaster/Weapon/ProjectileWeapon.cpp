@@ -30,8 +30,8 @@ void AProjectileWeapon::Fire(const FVector& HitTarget)
 				World->SpawnActor<AProjectile>(
 					ProjectileClass,
 					SocketTransform.GetLocation(),
-					TargetRotation
-					// SpawnParameters
+					TargetRotation,
+					SpawnParameters
 				);
 				// GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Red, FString::Printf(TEXT("%f, %f, %f"), SocketTransform.GetLocation().X, SocketTransform.GetLocation().Y, SocketTransform.GetLocation().Z));
 			}
