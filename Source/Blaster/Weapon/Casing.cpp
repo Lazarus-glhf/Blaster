@@ -24,6 +24,7 @@ void ACasing::BeginPlay()
 	Super::BeginPlay();
 
 	CasingMesh->OnComponentHit.AddDynamic(this, &ACasing::OnHit);
+	// TODO Random force maybe?
 	CasingMesh->AddImpulse(GetActorForwardVector() * ShellEjectionImpulse);
 }
 
