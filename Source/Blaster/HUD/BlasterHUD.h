@@ -23,6 +23,7 @@ struct FHUDPackage
 	UTexture2D* CrosshairsBottom;
 
 	float CrosshairSpread;
+	FLinearColor CrosshairsColor;
 };
 
 /**
@@ -39,7 +40,7 @@ public:
 private:
 	FHUDPackage HUDPackage;
 
-	void DrawCrosshair(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread = FVector2D::ZeroVector);
+	void DrawCrosshair(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread = FVector2D::ZeroVector, FLinearColor CrosshairColor = FLinearColor::White);
 
 	UPROPERTY(EditAnywhere)
 	float CrosshairSpreadMax = 16.f;
