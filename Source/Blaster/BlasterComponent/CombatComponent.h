@@ -72,9 +72,27 @@ private:
 	 */
 	float CrosshairVelocityFactor;
 	float CrosshairInAirFactor;
+	float CrosshairAimFactor;
+	float CrosshairShootingFactor;
 
 	FVector HitTarget;
 
+	/**
+	 * Aiming and FOV
+	 */
+
+	// Field of view not aiming; set to the camera's base FOV in Beginplay
+	float DefaultFOV;
+
+	UPROPERTY(EditAnywhere)
+	float ZoomedFOV = 30.f;
+
+	float CurrentFOV;
+
+	UPROPERTY(EditAnywhere)
+	float ZoomInterpSpeed = 20.f;
+
+	void InterpFOV(float DeltaTime);
 public:
 	
 };
