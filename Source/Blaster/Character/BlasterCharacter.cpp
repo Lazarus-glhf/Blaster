@@ -274,11 +274,11 @@ void ABlasterCharacter::Jump()
 
 void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 {
-	OverlappingWeapon = Weapon;
 	if (OverlappingWeapon)
 	{
 		OverlappingWeapon->ShowPickupWidget(false);
 	}
+	OverlappingWeapon = Weapon;
 	// 如果控制 Character 的是服务器
 	if (IsLocallyControlled())
 	{
