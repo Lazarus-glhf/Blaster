@@ -8,6 +8,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
+#include "Blaster/Character/BlasterCharacter.h"
+#include "Blaster/Blaster.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -22,6 +24,7 @@ AProjectile::AProjectile()
 	CollisionBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+	CollisionBox->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECollisionResponse::ECR_Block);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
@@ -73,6 +76,12 @@ void AProjectile::Destroyed()
 
 void AProjectile::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor);
+	if (BlasterCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit a blaster character!"));
+		BlasterCharacter->MulticastHit();
+	}
 	// TODO Deal with health and damage
 	Destroy();
 }

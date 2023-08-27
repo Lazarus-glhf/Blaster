@@ -23,8 +23,12 @@ public:
 	virtual void PostInitializeComponents() override;
 	void PlayFireMontage(bool bAiming);
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastHit();
 protected:
 	virtual void BeginPlay() override;
+
+	void PlayHitReactMontage();
 
 	//---------- Input-----------------
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -90,11 +94,19 @@ private:
 	UPROPERTY(EditAnywhere, Category = Combat)
 	class UAnimMontage* FireWeaponMontage;
 
+	UPROPERTY(EditAnywhere, Category = Combat)
+	UAnimMontage* HitReactMontage;
+
 	UFUNCTION()
 	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
 
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPress();
+
+	void HideCameraIfCharacterClose();
+	
+	UPROPERTY(EditAnywhere)
+	float CameraThreshold = 200.f;
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped() const;
