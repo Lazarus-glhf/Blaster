@@ -120,6 +120,21 @@ private:
 	FRotator ProxyRotation;
 	float ProxyYaw;
 	float TimeSinceLastMovementReplication = 0.f;
+
+	/**
+	 * Player health
+	 */
+	UPROPERTY(EditAnywhere, Category = "Player State")
+	float MaxHealth = 100.f;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Health, VisibleAnywhere ,Category = "Player State")
+	float Health = MaxHealth;
+
+	UFUNCTION()
+	void OnRep_Health();
+
+	UPROPERTY()
+	class ABlasterPlayerController* BlasterPlayerController;
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped() const;
