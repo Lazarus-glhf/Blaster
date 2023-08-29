@@ -12,10 +12,12 @@ ACasing::ACasing()
 
 	CasingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CasingMesh"));
 	SetRootComponent(CasingMesh);
-	CasingMesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	CasingMesh->SetSimulatePhysics(true);
 	CasingMesh->SetEnableGravity(true);
 	CasingMesh->SetNotifyRigidBodyCollision(true);
+	CasingMesh->SetCollisionResponseToAllChannels(ECR_Block);
+	CasingMesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+
 	ShellEjectionImpulse = 10.f;
 }
 
@@ -30,10 +32,27 @@ void ACasing::BeginPlay()
 
 void ACasing::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (ShellSound)
+	if (!bHitted)
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, ShellSound, GetActorLocation());
+		bHitted = true;
+		if (ShellSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, ShellSound, GetActorLocation());
+		}
 	}
-	// TODO Use timer to delay casing's destroy 
+}
+
+void ACasing::StartDestroyTimer()
+{
+	GetWorldTimerManager().SetTimer(
+		DestroyTimer,
+		this,
+		&ACasing::DestroyTimerFinished,
+		DestroyDelay
+		);
+}
+
+void ACasing::DestroyTimerFinished()
+{
 	Destroy();
 }

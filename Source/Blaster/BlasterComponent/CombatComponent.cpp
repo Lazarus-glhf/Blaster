@@ -54,12 +54,6 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 		
 		SetHUDCrosshairs(DeltaTime);
 		InterpFOV(DeltaTime);
-
-		const bool bTimerExits = Character->GetWorldTimerManager().TimerExists(FireTimer);
-		if (bTimerExits)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Timer exits: %d"), bTimerExits);	
-		}
 	}
 }
 

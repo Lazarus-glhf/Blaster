@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "Casing.generated.h"
 
@@ -14,6 +15,8 @@ class BLASTER_API ACasing : public AActor
 public:	
 	ACasing();
 
+	void StartDestroyTimer();
+	
 protected:
 	virtual void BeginPlay() override;
 	
@@ -28,4 +31,13 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class USoundCue* ShellSound;
+
+	UPROPERTY(EditAnywhere)
+	float DestroyDelay = 5.f;
+
+	bool bHitted = false;
+	
+	FTimerHandle DestroyTimer;
+	
+	void DestroyTimerFinished();
 };

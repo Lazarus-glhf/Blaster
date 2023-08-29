@@ -124,11 +124,15 @@ void AWeapon::Fire(const FVector& HitTarget)
 			UWorld* World = GetWorld();
 			if (World)
 			{
-				World->SpawnActor<ACasing>(
+				ACasing* Casing = World->SpawnActor<ACasing>(
 					CasingClass,
 					SocketTransform.GetLocation(),
 					SocketTransform.GetRotation().Rotator()
 				);
+				if (Casing)
+				{
+					Casing->StartDestroyTimer();
+				}
 			}
 		}
 	}
