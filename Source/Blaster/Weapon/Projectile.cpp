@@ -76,12 +76,5 @@ void AProjectile::Destroyed()
 
 void AProjectile::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor);
-	if (BlasterCharacter)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit a blaster character!"));
-		BlasterCharacter->MulticastHit();
-	}
-	// TODO Deal with health and damage
 	Destroy();
 }
