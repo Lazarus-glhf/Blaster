@@ -516,7 +516,6 @@ void ABlasterCharacter::UpdateHUDHealth()
 
 void ABlasterCharacter::UpdateDissolveMaterial(float DissolveValue)
 {
-	UE_LOG(LogTemp, Warning, TEXT("DissolveValue: %f"), DissolveValue);
 	if (DynamicDissolveMaterialInstance)
 	{
 		DynamicDissolveMaterialInstance->SetScalarParameterValue(TEXT("Dissolve"), DissolveValue);
