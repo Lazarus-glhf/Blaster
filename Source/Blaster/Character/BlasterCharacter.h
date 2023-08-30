@@ -32,7 +32,7 @@ public:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastEliminated();
-	
+	virtual void Destroyed() override;
 protected:
 	virtual void BeginPlay() override;
 
@@ -180,6 +180,18 @@ private:
 	UFUNCTION()
 	void UpdateDissolveMaterial(float DissolveValue);
 	void StartDissolve();
+
+	/**
+	 * Eliminated Effect
+	 */
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* EliminatedBotEffect;
+
+	UPROPERTY(VisibleAnywhere)
+	UParticleSystemComponent* EliminatedBotComponent;
+
+	UPROPERTY(EditAnywhere)
+	class USoundCue* EliminatedSound;
 	
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);

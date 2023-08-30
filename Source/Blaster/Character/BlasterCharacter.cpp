@@ -17,6 +17,9 @@
 #include "Blaster/Blaster.h"
 #include "Blaster/GameMode/BlasterGameMode.h"
 #include "Blaster/PlayerController/BlasterPlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Sound/SoundCue.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -55,6 +58,16 @@ ABlasterCharacter::ABlasterCharacter()
 	MinNetUpdateFrequency = 33.f;
 
 	DissolveTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DissolveTimelineComponent"));
+}
+
+void ABlasterCharacter::Destroyed()
+{
+	Super::Destroyed();
+
+	if (EliminatedBotComponent)
+	{
+		EliminatedBotComponent->DestroyComponent();
+	}
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -163,6 +176,26 @@ void ABlasterCharacter::MulticastEliminated_Implementation()
 	// Disable collision
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// Spawn eliminated effect
+	if (EliminatedBotEffect)
+	{
+		const FVector EliminatedBotSpawnPoint(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + 200.f);
+		EliminatedBotComponent = UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			EliminatedBotEffect,
+			EliminatedBotSpawnPoint,
+			GetActorRotation()
+		);
+	}
+	if (EliminatedSound)
+	{
+		UGameplayStatics::SpawnSoundAtLocation(
+			this,
+			EliminatedSound,
+			GetActorLocation()
+		);
+	}
 }
 
 void ABlasterCharacter::EliminatedTimerFinished()
