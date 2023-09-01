@@ -42,6 +42,9 @@ protected:
 	void ReceiveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, class AController* InstigatorController, AActor* DamageCauser);
 	void UpdateHUDHealth();
 
+	// Poll for any relevant classes and initialize HUD
+	void PollInit();
+
 	//---------- Input-----------------
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
@@ -192,6 +195,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class USoundCue* EliminatedSound;
+
+	UPROPERTY()
+	class ABlasterPlayerState* BlasterPlayerState;
 	
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
