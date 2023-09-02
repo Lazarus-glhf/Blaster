@@ -145,7 +145,7 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_Health, VisibleAnywhere ,Category = "Player State")
 	float Health = MaxHealth;
-
+				
 	UFUNCTION()
 	void OnRep_Health();
 
