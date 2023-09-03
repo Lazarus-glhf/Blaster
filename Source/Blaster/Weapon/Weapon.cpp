@@ -129,7 +129,7 @@ void AWeapon::OnRep_WeaponState()
 
 void AWeapon::SpendRound()
 {
-	--Ammo;
+	Ammo = FMath::Clamp(Ammo - 1, 0, MagCapacity);
 	SetHUDWeaponAmmo();
 }
 
@@ -211,4 +211,9 @@ void AWeapon::Dropped()
 	SetOwner(nullptr);
 	BlasterOwnerCharacter = nullptr;
 	BlasterOwnerPlayerController = nullptr;
+}
+
+bool AWeapon::IsEmpty() const
+{
+	return Ammo <= 0;
 }
