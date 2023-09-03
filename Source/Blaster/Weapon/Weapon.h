@@ -25,6 +25,7 @@ public:
 	AWeapon();
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void OnRep_Owner() override;
 	void ShowPickupWidget(bool bShowWidget);
 	virtual void Fire(const FVector& HitTarget);
 	void Dropped();
@@ -62,7 +63,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = Combat)
 	float FireDelay = .15f;
 
-	// TODO Get from the weapon
 	UPROPERTY(EditAnywhere, Category = Combat)
 	bool bAutomatic = true;
 	
@@ -96,6 +96,9 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_WeaponState ,VisibleAnywhere, Category = "Weapon Properties", Replicated)
 	EWeaponState WeaponState;
 
+	UFUNCTION()
+	void OnRep_WeaponState();
+
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	class UWidgetComponent* PickupWidget;
 
@@ -105,10 +108,25 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ACasing> CasingClass;
 
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_Ammo)
+	int32 Ammo;
+
 	UFUNCTION()
-	void OnRep_WeaponState();
+	void OnRep_Ammo();
+
+	UPROPERTY(EditAnywhere)
+	int32 MagCapacity;
+
+	UPROPERTY()
+	class ABlasterCharacter* BlasterOwnerCharacter;
+	UPROPERTY()
+	class ABlasterPlayerController* BlasterOwnerPlayerController;
+
+	void SpendRound();
+
 public:
 	void SetWeaponState(EWeaponState State);
+	void SetHUDWeaponAmmo();
 	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return  WeaponMesh; }
 	FORCEINLINE float GetZoomedFOV() const { return ZoomFOV; }
