@@ -332,6 +332,21 @@ bool UCombatComponent::CanFire()
 	return !(EquippedWeapon->IsEmpty() || !bCanFire);
 }
 
+void UCombatComponent::Reload()
+{
+	if (CarriedAmmo > 0)
+	{
+		ServerReload();
+	}
+}
+
+void UCombatComponent::ServerReload_Implementation()
+{
+	if (Character == nullptr) return;
+
+	Character->PlayReloadMontage();
+}
+
 // Carried ammo
 void UCombatComponent::OnRep_CarriedAmmo()
 {
