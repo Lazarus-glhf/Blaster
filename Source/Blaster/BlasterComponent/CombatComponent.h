@@ -106,7 +106,7 @@ private:
 	FTimerHandle FireTimer;
 	
 	bool bCanFire = true;
-
+ 
 	void StartFireTimer();
 	void FireTimerFinished();
 
@@ -120,4 +120,9 @@ private:
 	void OnRep_CarriedAmmo();
 
 	TMap<EWeaponType, int32> CarriedAmmoMap;
+	
+	UPROPERTY(EditAnywhere)
+	int StartingARAmmo = 30;
+	
+	void InitializeCarriedAmmo();
 };
