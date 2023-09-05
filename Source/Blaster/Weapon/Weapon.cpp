@@ -64,8 +64,7 @@ void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	DOREPLIFETIME(AWeapon, Ammo);
 }
 
-void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-                              int32 OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult)
+void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult)
 {
 	ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor);
 	if (BlasterCharacter && PickupWidget)
@@ -74,8 +73,7 @@ void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor* Oth
 	}
 }
 
-void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor);
 	if (BlasterCharacter && PickupWidget)
@@ -211,6 +209,12 @@ void AWeapon::Dropped()
 	SetOwner(nullptr);
 	BlasterOwnerCharacter = nullptr;
 	BlasterOwnerPlayerController = nullptr;
+}
+
+void AWeapon::ReloadAmmo(int32 AmmoToReload)
+{
+	Ammo = FMath::Clamp(Ammo - AmmoToReload, 0, MagCapacity);
+	SetHUDWeaponAmmo();
 }
 
 bool AWeapon::IsEmpty() const

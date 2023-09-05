@@ -50,6 +50,7 @@ protected:
 	void ServerReload();
 
 	void HandleReload();
+	int32 AmountToReload();
 
 	UFUNCTION()
 	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
@@ -59,13 +60,13 @@ protected:
 
 private:
 	UPROPERTY()
-	class ABlasterCharacter* Character;
+	ABlasterCharacter* Character;
 
 	UPROPERTY()
 	class ABlasterPlayerController* Controller;
 
 	UPROPERTY()
-	class ABlasterHUD* HUD;
+	ABlasterHUD* HUD;
 	
 	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
 	AWeapon* EquippedWeapon;
@@ -142,4 +143,6 @@ private:
 
 	UFUNCTION()
 	void OnRep_CombatState();
+
+	void UpdateAmmoValues();
 };
