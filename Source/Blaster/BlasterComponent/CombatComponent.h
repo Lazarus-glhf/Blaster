@@ -4,6 +4,7 @@
 #include "Blaster/HUD/BlasterHUD.h"
 #include "Components/ActorComponent.h"
 #include "Blaster/Weapon/WeaponTypes.h"
+#include "Blaster/BlasterTypes/CombatState.h"
 #include "CombatComponent.generated.h"
 
 #define TRACE_LENGTH 8000.f
@@ -23,8 +24,9 @@ public:
 	void EquipWeapon(AWeapon* WeaponToEquip);
 	void Reload();
 
-	UFUNCTION(Server, Reliable)
-	void ServerReload();
+	UFUNCTION(BlueprintCallable)
+	void FinishReloading();
+	
 protected:
 	virtual void BeginPlay() override;
 	void SetAiming(bool bIsAiming);
@@ -43,6 +45,11 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
+
+	UFUNCTION(Server, Reliable)
+	void ServerReload();
+
+	void HandleReload();
 
 	UFUNCTION()
 	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
@@ -129,4 +136,10 @@ private:
 	int StartingARAmmo = 30;
 	
 	void InitializeCarriedAmmo();
+
+	UPROPERTY(ReplicatedUsing = OnRep_CombatState)
+	ECombatState CombatState = ECombatState::ECS_Unoccupied;
+
+	UFUNCTION()
+	void OnRep_CombatState();
 };
