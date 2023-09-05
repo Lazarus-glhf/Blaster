@@ -35,19 +35,19 @@ public:
 	* Textures for the weapon crosshairs
 	*/
 	UPROPERTY(EditAnywhere, Category = Crosshairs)
-	class UTexture2D* CrosshairsCenter;
+	UTexture2D* CrosshairsCenter;
 
 	UPROPERTY(EditAnywhere, Category = Crosshairs)
-	class UTexture2D* CrosshairsLeft;
+	UTexture2D* CrosshairsLeft;
 
 	UPROPERTY(EditAnywhere, Category = Crosshairs)
-	class UTexture2D* CrosshairsRight;
+	UTexture2D* CrosshairsRight;
 
 	UPROPERTY(EditAnywhere, Category = Crosshairs)
-	class UTexture2D* CrosshairsTop;
+	UTexture2D* CrosshairsTop;
 
 	UPROPERTY(EditAnywhere, Category = Crosshairs)
-	class UTexture2D* CrosshairsBottom;
+	UTexture2D* CrosshairsBottom;
 
 	/**
 	 * Zoomed FOV While aiming
@@ -66,6 +66,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	bool bAutomatic = true;
+
+	UPROPERTY(EditAnywhere)
+	class USoundCue* EquipSound;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -104,7 +107,7 @@ private:
 	class UWidgetComponent* PickupWidget;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
-	class UAnimationAsset* FireAnimation;
+	UAnimationAsset* FireAnimation;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ACasing> CasingClass;
