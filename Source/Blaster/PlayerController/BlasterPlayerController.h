@@ -52,6 +52,8 @@ protected:
 	
 	float TimeSyncRunningTime = 0.f;
 	void CheckTimeSync(const float DeltaTime);
+
+	void HandleMatchHasStarted();
 	
 private:
 	UPROPERTY()
