@@ -21,6 +21,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float WarmupTime = 10.f;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float MatchTime = 120.f;
 
 	// 在 BeginPlay() 中初始化为当前世界时间
 	float LevelStartingTime = 0.f;
