@@ -26,6 +26,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* CasingMesh;
 
+	/**
+	 * @brief 随机为 0.5 ~ 2 倍
+	 */
 	UPROPERTY(EditAnywhere)
 	float ShellEjectionImpulse;
 
