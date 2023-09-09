@@ -69,6 +69,18 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class USoundCue* EquipSound;
+
+	/**
+	 * Used by CombatComponent
+	 */
+	UPROPERTY(EditAnywhere)
+	float CrosshairShootingFactorIncreaseFactor = 20.0f;
+	UPROPERTY(EditAnywhere)
+	float CrosshairShootingFactorDecreaseFactor = 10.0f;
+	UPROPERTY(EditAnywhere)
+	float CrosshairShootingFactorMax = 3.0f;
+	UPROPERTY(EditAnywhere)
+	float NextFireDelay = 0.2f;
 	
 protected:
 	virtual void BeginPlay() override;

@@ -88,22 +88,10 @@ private:
 	float CrosshairVelocityFactor;
 	float CrosshairInAirFactor;
 	float CrosshairAimFactor;
-	// TODO 获取自武器；由直接设定为固定值改为渐变
 	float CrosshairShootingFactor;
 
-	UPROPERTY(EditAnywhere)
-	float CrosshairShootingFactorIncreaseFactor = 20.0f;
-	UPROPERTY(EditAnywhere)
-	float CrosshairShootingFactorDecreaseFactor = 10.0f;
-	UPROPERTY(EditAnywhere)
-	float CrosshairShootingFactorMax = 3.0f;
-
-	UPROPERTY(EditAnywhere)
-	float NextFireDelay = 0.2f;
-	
-	float CountdownWaitForNextFire;
-	
 	float FireCounter = 0;
+	float CountdownWaitForNextFire;
 
 	FVector HitTarget;
 
