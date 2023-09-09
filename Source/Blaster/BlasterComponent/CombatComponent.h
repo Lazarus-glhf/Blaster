@@ -97,11 +97,6 @@ private:
 	float CrosshairShootingFactorDecreaseFactor = 10.0f;
 	UPROPERTY(EditAnywhere)
 	float CrosshairShootingFactorMax = 3.0f;
-
-	UPROPERTY(EditAnywhere)
-	float NextFireDelay = 0.2f;
-	
-	float CountdownWaitForNextFire;
 	
 	float FireCounter = 0;
 

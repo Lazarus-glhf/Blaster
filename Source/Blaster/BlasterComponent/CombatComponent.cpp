@@ -120,18 +120,16 @@ void UCombatComponent::SetHUDCrosshairs(float DeltaTime)
 				CrosshairAimFactor = FMath::FInterpTo(CrosshairAimFactor, 0.f, DeltaTime, 30.f);
 			}
 
-			if (FireCounter)
+			if (GetWorld()->GetTimerManager().IsTimerActive(FireTimer))
 			{
 				CrosshairShootingFactor = FMath::FInterpTo(CrosshairShootingFactor, FMath::Clamp(CrosshairShootingFactor + FireCounter, 0.0f, CrosshairShootingFactorMax), DeltaTime, CrosshairShootingFactorIncreaseFactor);
 				FireCounter = FMath::Clamp(FireCounter - DeltaTime * CrosshairShootingFactorIncreaseFactor, 0.0f, FireCounter);
 			}
-			else if (FireCounter == 0.0f && CountdownWaitForNextFire == 0.0f)
+			else
 			{
 				CrosshairShootingFactor = FMath::FInterpTo(CrosshairShootingFactor, 0.f, DeltaTime, CrosshairShootingFactorDecreaseFactor);
 			}
 			
-			CountdownWaitForNextFire = FMath::Clamp(CountdownWaitForNextFire - DeltaTime, 0.0f, CountdownWaitForNextFire);
-
 			// TODO Add more factors like crouch and aim
 			HUDPackage.CrosshairSpread =
 				0.5f +						// 缩放基值
@@ -272,7 +270,6 @@ void UCombatComponent::Fire()
 		{
 			ServerFire(HitTarget);
 			StartFireTimer();
-			CountdownWaitForNextFire = NextFireDelay;
 			FireCounter += 1.0f;
 		}
 	}
