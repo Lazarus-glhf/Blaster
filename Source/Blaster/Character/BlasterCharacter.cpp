@@ -84,6 +84,17 @@ void ABlasterCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	else
+	{
+		if (HasAuthority())
+		{
+			PlayerController = Cast<APlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+			{
+				Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			}
+		}
+	}
 
 	UpdateHUDHealth();
 	if (HasAuthority())
