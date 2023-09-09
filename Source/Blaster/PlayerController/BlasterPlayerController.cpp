@@ -38,6 +38,17 @@ void ABlasterPlayerController::Tick(float DeltaSeconds)
 	PollInit();
 }
 
+void ABlasterPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	const ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(InPawn);
+	if (BlasterCharacter)
+	{
+		SetHUDHealth(BlasterCharacter->GetHealth(), BlasterCharacter->GetMaxHealth());
+	}
+}
+
 void ABlasterPlayerController::PollInit()
 {
 	if (CharacterOverlay == nullptr)
@@ -98,17 +109,6 @@ void ABlasterPlayerController::ClientJoinMidGame_Implementation(FName StateOfMat
 		{
 			BlasterHUD->AddAnnouncement();
 		}
-	}
-}
-
-void ABlasterPlayerController::OnPossess(APawn* InPawn)
-{
-	Super::OnPossess(InPawn);
-
-	const ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(InPawn);
-	if (BlasterCharacter)
-	{
-		SetHUDHealth(BlasterCharacter->GetHealth(), BlasterCharacter->GetMaxHealth());
 	}
 }
 
@@ -293,6 +293,10 @@ void ABlasterPlayerController::OnMatchStateSet(FName State)
 	{
 		HandleMatchHasStarted();	
 	}
+	else if (MatchState == MatchState::Cooldown)
+	{
+		HandleCooldown();
+	}
 }
 
 void ABlasterPlayerController::OnRep_MatchState()
@@ -300,6 +304,10 @@ void ABlasterPlayerController::OnRep_MatchState()
 	if (MatchState == MatchState::InProgress)
 	{
 		HandleMatchHasStarted();
+	}
+	else if (MatchState == MatchState::Cooldown)
+	{
+		HandleCooldown();
 	}
 }
 
@@ -312,6 +320,19 @@ void ABlasterPlayerController::HandleMatchHasStarted()
 		if (BlasterHUD->Announcement)
 		{
 			BlasterHUD->Announcement->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+}
+
+void ABlasterPlayerController::HandleCooldown()
+{
+	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
+	if (BlasterHUD)
+	{
+		BlasterHUD->CharacterOverlay->RemoveFromParent();
+		if (BlasterHUD->Announcement)
+		{
+			BlasterHUD->Announcement->SetVisibility(ESlateVisibility::Visible);
 		}
 	}
 }
