@@ -27,7 +27,7 @@ private:
 	UStaticMeshComponent* CasingMesh;
 
 	/**
-	 * @brief 随机为 0.5 ~ 2 倍
+	 * @brief 随机旋转 pitch 和 yaw 范围为 -30 ~ 30 角度，随机系数为 0.75 ~ 1.25
 	 */
 	UPROPERTY(EditAnywhere)
 	float ShellEjectionImpulse;

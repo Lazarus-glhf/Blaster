@@ -26,8 +26,9 @@ void ACasing::BeginPlay()
 	Super::BeginPlay();
 
 	CasingMesh->OnComponentHit.AddDynamic(this, &ACasing::OnHit);
-	// TODO Random force maybe?
-	CasingMesh->AddImpulse(GetActorForwardVector() * ShellEjectionImpulse * FMath::FRandRange(0.5, 2));
+
+	FRotator RandomRotator = FRotator(FMath::FRandRange(-30., 30.), FMath::FRandRange(-30., 30.), 0);
+    CasingMesh->AddImpulse(RandomRotator.RotateVector(GetActorForwardVector()) * ShellEjectionImpulse * FMath::FRandRange(0.75, 1.25));
 }
 
 void ACasing::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
