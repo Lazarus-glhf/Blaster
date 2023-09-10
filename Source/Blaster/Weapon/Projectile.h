@@ -15,7 +15,7 @@ public:
 	AProjectile();
 	virtual void Tick(float DeltaTime) override;
 	virtual void Destroyed() override;
-
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -31,9 +31,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UProjectileMovementComponent* ProjectileMovementComponent;
-
-	UPROPERTY(EditAnywhere)
-	class UNiagaraSystem* Tracer;
 
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* ImpactParticles;
