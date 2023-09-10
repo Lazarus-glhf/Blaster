@@ -2,10 +2,10 @@
 
 
 #include "Casing.h"
+#include "Blaster/Blaster.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
-// Sets default values
 ACasing::ACasing()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -15,8 +15,9 @@ ACasing::ACasing()
 	CasingMesh->SetSimulatePhysics(true);
 	CasingMesh->SetEnableGravity(true);
 	CasingMesh->SetNotifyRigidBodyCollision(true);
-	CasingMesh->SetCollisionResponseToAllChannels(ECR_Block);
 	CasingMesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	CasingMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	CasingMesh->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECR_Ignore);
 
 	ShellEjectionImpulse = 10.f;
 }

@@ -36,21 +36,6 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// FVector SpawnLocation = GetActorLocation();
-	// GEngine->AddOnScreenDebugMessage(2, 2.f, FColor::Green, FString::Printf(TEXT("%f, %f, %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z));
-	// if (Tracer)
-	// {
-	// 	UNiagaraFunctionLibrary::SpawnSystemAttached(
-	// 		Tracer,
-	// 		CollisionBox,
-	// 		FName(),
-	// 		GetActorLocation(),
-	// 		GetActorRotation(),
-	// 		EAttachLocation::KeepWorldPosition,
-	// 		false
-	// 	);
-	// }
-
 	if (HasAuthority())
 	{
 		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
