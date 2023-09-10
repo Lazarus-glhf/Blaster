@@ -70,6 +70,13 @@ void ABlasterCharacter::Destroyed()
 	{
 		EliminatedBotComponent->DestroyComponent();
 	}
+
+	const ABlasterGameMode* BlasterGameMode = Cast<ABlasterGameMode>(UGameplayStatics::GetGameMode(this));
+	const bool bMatchNotInProgress = BlasterGameMode && BlasterGameMode->GetMatchState() != MatchState::InProgress;
+	if (Combat && Combat->EquippedWeapon && bMatchNotInProgress)
+	{
+		Combat->EquippedWeapon->Destroy();
+	}
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -437,7 +444,10 @@ void ABlasterCharacter::MulticastEliminated_Implementation()
 
 	// Disable character movement
 	bDisableGameplay = true;
-	FireButtonPressed(false);
+	if (Combat)
+	{
+		Combat->FireButtonPressed(false);
+	}
 	// Disable collision
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
