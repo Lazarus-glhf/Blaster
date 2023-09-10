@@ -352,6 +352,11 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 			End,
 			ECC_Visibility
 		);
+		// 若未 Trace 到目标，则将 End 作为 ImpactPoint
+		if (!TraceHitResult.GetActor())
+		{
+			TraceHitResult.ImpactPoint = End;
+		}
 		if (TraceHitResult.GetActor() && TraceHitResult.GetActor()->Implements<UInteractWithCrosshairsInterface>())
 		{
 			HUDPackage.CrosshairsColor = FLinearColor::Red;
