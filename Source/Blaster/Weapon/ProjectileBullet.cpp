@@ -4,6 +4,7 @@
 #include "ProjectileBullet.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
@@ -12,6 +13,10 @@ AProjectileBullet::AProjectileBullet()
 	WhipDetectSphere = CreateDefaultSubobject<USphereComponent>(TEXT("WhipDetectSphere"));
 	WhipDetectSphere->SetupAttachment(RootComponent);
 	WhipDetectSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+
+	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
+	ProjectileMovementComponent->bRotationFollowsVelocity = true;
+	ProjectileMovementComponent->SetIsReplicated(true);
 }
 
 

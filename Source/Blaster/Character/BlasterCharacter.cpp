@@ -499,8 +499,6 @@ void ABlasterCharacter::PlayReloadMontage()
 {
 	if (Combat == nullptr || Combat->EquippedWeapon == nullptr) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("Try play reload montage"));
-	
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && ReloadMontage)
 	{
@@ -511,7 +509,9 @@ void ABlasterCharacter::PlayReloadMontage()
 		case EWeaponType::EWT_AssaultRifle:
 			SectionName = FName("Riffle");
 			break;
-			
+		case EWeaponType::EWT_RocketLauncher:
+			SectionName = FName("Riffle");
+			break;
 		case EWeaponType::EWT_MAX:
 			break;
 		}

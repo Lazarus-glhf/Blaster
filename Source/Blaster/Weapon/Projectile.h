@@ -53,7 +53,4 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float DestroyTime = 0.5f;
-
-	UPROPERTY(VisibleAnywhere)
-	class UProjectileMovementComponent* ProjectileMovementComponent;
 };
