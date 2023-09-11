@@ -26,6 +26,10 @@ protected:
 	float Damage = 20.f;
 
 private:
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* Tracer;
+	
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* CollisionBox;
 

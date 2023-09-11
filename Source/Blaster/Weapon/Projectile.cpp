@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Projectile.h"
 
 #include "NiagaraComponent.h"
@@ -10,10 +7,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
-#include "Blaster/Character/BlasterCharacter.h"
 #include "Blaster/Blaster.h"
 
-// Sets default values
 AProjectile::AProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -28,6 +23,9 @@ AProjectile::AProjectile()
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
 	CollisionBox->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECollisionResponse::ECR_Block);
 
+	Tracer = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Tracer"));
+	Tracer->SetupAttachment(RootComponent);
+
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 }
@@ -35,6 +33,11 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (Tracer)
+	{
+		Tracer->Activate();	
+	}
 
 	if (HasAuthority())
 	{
