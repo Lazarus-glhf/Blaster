@@ -142,11 +142,14 @@ private:
 
 	TMap<EWeaponType, int32> CarriedAmmoMap;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Ammo")
 	int StartingARAmmo = 60;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Ammo")
 	int StartingRocketAmmo = 0;
+
+	UPROPERTY(EditAnywhere, Category = "Ammo")
+	int StartingPistolAmmo = 30;
 	
 	void InitializeCarriedAmmo();
 
