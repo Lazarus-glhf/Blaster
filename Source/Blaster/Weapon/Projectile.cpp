@@ -39,11 +39,12 @@ void AProjectile::BeginPlay()
 			false
 		);
 	}
-
-	// if (HasAuthority())
-	// {
-	CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
-	// }
+	
+	// 慢速 Projectile 子类应当在客户端也注册碰撞事件，并忽略使用者
+	if (HasAuthority())
+	{
+		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+	}
 }
 
 void AProjectile::Tick(float DeltaTime)

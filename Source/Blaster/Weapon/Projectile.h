@@ -19,6 +19,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere)
+	class UBoxComponent* CollisionBox;
+	
 	UFUNCTION()
 	virtual void OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
@@ -27,6 +30,7 @@ protected:
 
 	UFUNCTION()
 	virtual void SetUpDestroyTimer();
+	
 	UFUNCTION()
 	virtual void DestroyTimerFinished();
 	
@@ -38,9 +42,6 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class USoundCue* ImpactSound;
-
-	UPROPERTY(EditAnywhere)
-	class UBoxComponent* CollisionBox;
 	
 private:
 	UPROPERTY(EditAnywhere)
@@ -49,8 +50,11 @@ private:
 	UPROPERTY()
 	class UNiagaraComponent* TrailSystemComponent;
 
-	FTimerHandle TrailDestroyTimer;
-
+	/**
+	 * @brief Projectile 销毁延时
+	 */
 	UPROPERTY(EditAnywhere)
 	float DestroyTime = 0.5f;
+	
+	FTimerHandle TrailDestroyTimer;
 };

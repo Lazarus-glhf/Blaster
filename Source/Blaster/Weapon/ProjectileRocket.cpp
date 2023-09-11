@@ -3,6 +3,7 @@
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
 #include "RocketMovementComponent.h"
+#include "Components/BoxComponent.h"
 
 AProjectileRocket::AProjectileRocket()
 {
@@ -18,6 +19,12 @@ AProjectileRocket::AProjectileRocket()
 void AProjectileRocket::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 客户端注册碰撞事件，并忽略使用者
+	if (!HasAuthority())
+	{
+		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectileRocket::OnHit);
+	}
 
 	if (ProjectileLoop && LoopingSoundAttenuation)
 	{
@@ -40,6 +47,7 @@ void AProjectileRocket::BeginPlay()
 
 void AProjectileRocket::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	// 忽略使用者
 	if (OtherActor == GetOwner())
 	{
 		return;

@@ -29,14 +29,17 @@ void AProjectileBullet::BeginPlay()
 
 void AProjectileBullet::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
-	if (OwnerCharacter && HasAuthority())
+	if (const ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()); OwnerCharacter)
 	{
-		AController* OwnerController = OwnerCharacter->Controller;
-		if (OwnerController)
+		if (AController* OwnerController = OwnerCharacter->Controller; OwnerController)
 		{
 			UGameplayStatics::ApplyDamage(OtherActor, Damage, OwnerController, this, UDamageType::StaticClass());	
 		}
+	}
+	
+	if (WhipDetectSphere)
+	{
+		WhipDetectSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);	
 	}
 	
 	Super::OnHit(HitCom, OtherActor, OtherComp, NormalImpulse, Hit);
