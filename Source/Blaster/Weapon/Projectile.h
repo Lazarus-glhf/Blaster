@@ -25,20 +25,35 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float Damage = 20.f;
 
-private:
-
-	UPROPERTY(EditAnywhere)
-	class UNiagaraComponent* Tracer;
+	UFUNCTION()
+	virtual void SetUpDestroyTimer();
+	UFUNCTION()
+	virtual void DestroyTimerFinished();
 	
 	UPROPERTY(EditAnywhere)
-	class UBoxComponent* CollisionBox;
-
-	UPROPERTY(VisibleAnywhere)
-	class UProjectileMovementComponent* ProjectileMovementComponent;
+	bool bUseDestroyTimer = true;
 
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* ImpactParticles;
 
 	UPROPERTY(EditAnywhere)
 	class USoundCue* ImpactSound;
+
+	UPROPERTY(EditAnywhere)
+	class UBoxComponent* CollisionBox;
+	
+private:
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* TrailSystem;
+
+	UPROPERTY()
+	class UNiagaraComponent* TrailSystemComponent;
+
+	FTimerHandle TrailDestroyTimer;
+
+	UPROPERTY(EditAnywhere)
+	float DestroyTime = 0.5f;
+
+	UPROPERTY(VisibleAnywhere)
+	class UProjectileMovementComponent* ProjectileMovementComponent;
 };
