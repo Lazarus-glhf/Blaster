@@ -1,5 +1,5 @@
 ﻿#include "HitScanWeapon.h"
-
+#include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Blaster/Character/BlasterCharacter.h"
@@ -56,11 +56,21 @@ void AHitScanWeapon::Fire(const FVector& HitTarget)
 					UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 						World,
 						ImpactParticles,
-						End,
+						HitTarget,
 						FireHit.ImpactNormal.Rotation()
 					);
 				}
 			}
+		}
+		if (TrailParticles)
+		{
+			UNiagaraComponent* TrailComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				World,
+				TrailParticles,
+				Start
+			);
+			TrailComponent->SetVariableVec3(FName("ImpactPoint"), HitTarget);
+			TrailComponent->SetVariableVec3(FName("InitialSpeed"), (HitTarget - Start).GetSafeNormal() * TraceSpeed);
 		}
 	}
 }

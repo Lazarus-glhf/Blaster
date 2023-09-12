@@ -25,4 +25,10 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* ImpactParticles;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* TrailParticles;
+
+	UPROPERTY(EditAnywhere)
+	float TraceSpeed = 60000;
 };
