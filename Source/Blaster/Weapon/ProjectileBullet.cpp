@@ -24,7 +24,10 @@ void AProjectileBullet::BeginPlay()
 {
 	Super::BeginPlay();
 
-	WhipDetectSphere->OnComponentHit.AddDynamic(this, &AProjectileBullet::OnSpherePassCharacter);
+	if (WhipDetectSphere)
+	{
+		WhipDetectSphere->OnComponentHit.AddDynamic(this, &AProjectileBullet::OnSpherePassCharacter);	
+	}
 }
 
 void AProjectileBullet::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
