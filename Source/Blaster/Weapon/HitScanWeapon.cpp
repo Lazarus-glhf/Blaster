@@ -4,10 +4,12 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Sound/SoundCue.h"
+#include "WeaponTypes.h"
 
 AHitScanWeapon::AHitScanWeapon()
 {
-	PrimaryActorTick.bCanEverTick = false;
 }
 
 void AHitScanWeapon::Fire(const FVector& HitTarget)
@@ -60,6 +62,10 @@ void AHitScanWeapon::Fire(const FVector& HitTarget)
 						FireHit.ImpactNormal.Rotation()
 					);
 				}
+				if (HitSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(World, HitSound, HitTarget);
+				}
 			}
 		}
 		if (TrailParticles)
@@ -75,14 +81,17 @@ void AHitScanWeapon::Fire(const FVector& HitTarget)
 	}
 }
 
-void AHitScanWeapon::BeginPlay()
+FVector AHitScanWeapon::TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget)
 {
-	Super::BeginPlay();
-	
-}
+	FVector ToTargetNormalized = (HitTarget - TraceStart).GetSafeNormal();
+	FVector SphereCenter = TraceStart + ToTargetNormalized * DistanceToSphere;
+	FVector RandomVector = UKismetMathLibrary::RandomUnitVector() * FMath::FRandRange(0.f, SphereRadius);
+	FVector EndLocation = SphereCenter + RandomVector;
+	FVector ToEndLocation = EndLocation - TraceStart;
 
-void AHitScanWeapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
+	DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 12, FColor::Red, true);
+	DrawDebugSphere(GetWorld(), EndLocation, 4.f, 12, FColor::Green, true);
+	DrawDebugLine(GetWorld(), TraceStart, TraceStart + ToEndLocation * TRACE_LENGTH / ToEndLocation.Size(), FColor::Cyan, true);
 
+	return FVector(TraceStart + ToEndLocation * TRACE_LENGTH / ToEndLocation.Size());
+}

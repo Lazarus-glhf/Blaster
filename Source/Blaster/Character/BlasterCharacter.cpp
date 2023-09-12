@@ -515,6 +515,9 @@ void ABlasterCharacter::PlayReloadMontage()
 		case EWeaponType::EWT_Pistol:
 			SectionName = FName("Riffle");
 			break;
+		case EWeaponType::EWT_Shotgun:
+			SectionName = FName("Riffle");
+			break;
 		case EWeaponType::EWT_MAX:
 			break;
 		}
