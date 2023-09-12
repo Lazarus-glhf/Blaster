@@ -30,6 +30,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	class USoundCue* WhipSoundCue;
 
+	UFUNCTION()
 	void OnSpherePassCharacter(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
 };
