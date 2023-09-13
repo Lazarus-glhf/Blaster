@@ -151,6 +151,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Ammo")
 	int StartingShotgunAmmo = 16;
+
+	UPROPERTY(EditAnywhere, Category = "Ammo")
+	int StartingSniperAmmo = 16;
 	
 	void InitializeCarriedAmmo();
 
