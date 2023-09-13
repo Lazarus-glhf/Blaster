@@ -15,8 +15,8 @@ public:
 
 protected:
 	FVector TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget);
+	void WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit);
 
-private:
 	UPROPERTY(EditAnywhere)
 	class USoundCue* HitSound;
 	
@@ -26,6 +26,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* ImpactParticles;
 
+private:
 	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* TrailParticles;
 

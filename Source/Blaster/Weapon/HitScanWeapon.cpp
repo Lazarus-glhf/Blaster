@@ -25,58 +25,63 @@ void AHitScanWeapon::Fire(const FVector& HitTarget)
 	{
 		const FTransform SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetWeaponMesh());
 		const FVector Start = SocketTransform.GetLocation();
-		FVector End = Start + (HitTarget - Start) * 1.25; // 延伸 LineTrace 的距离确保命中
 
 		FHitResult FireHit;
-		UWorld* World = GetWorld();
-		if (World)
+		WeaponTraceHit(Start, HitTarget, FireHit);
+
+		ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(FireHit.GetActor());
+		if (BlasterCharacter)
 		{
-			World->LineTraceSingleByChannel(
-				FireHit,
-				Start,
-				End,
-				ECollisionChannel::ECC_Visibility
-			);
-			if (FireHit.bBlockingHit)
+			if (HasAuthority())
 			{
-				ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(FireHit.GetActor());
-				if (BlasterCharacter)
-				{
-					if (HasAuthority())
-					{
-						UGameplayStatics::ApplyDamage(
-							BlasterCharacter,
-							Damage,
-							InstigaterController,
-							this,
-							UDamageType::StaticClass()
-						);	
-					}
-				}
-				if (ImpactParticles)
-				{
-					UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-						World,
-						ImpactParticles,
-						HitTarget,
-						FireHit.ImpactNormal.Rotation()
-					);
-				}
-				if (HitSound)
-				{
-					UGameplayStatics::PlaySoundAtLocation(World, HitSound, HitTarget);
-				}
+				UGameplayStatics::ApplyDamage(
+					BlasterCharacter,
+					Damage,
+					InstigaterController,
+					this,
+					UDamageType::StaticClass()
+				);	
 			}
 		}
+		if (ImpactParticles)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				GetWorld(),
+				ImpactParticles,
+				FireHit.ImpactPoint,
+				FireHit.ImpactNormal.Rotation()
+			);
+		}
+		if (HitSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, FireHit.ImpactPoint);
+		}
+	}
+}
+
+void AHitScanWeapon::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit)
+{
+	if (UWorld* World = GetWorld(); World)
+	{
+		FVector End = bUseScatter ? TraceEndWithScatter(TraceStart, HitTarget) : TraceStart + (HitTarget - TraceStart) * 1.25; // 延伸 LineTrace 的距离确保命中
+		World->LineTraceSingleByChannel(
+			OutHit,
+			TraceStart,
+			End,
+			ECollisionChannel::ECC_Visibility
+		);
+		FVector BeamEnd = End;
+		if (OutHit.bBlockingHit)
+		{
+			BeamEnd = OutHit.ImpactPoint;
+		}
+
+		// Spawn trail fx
 		if (TrailParticles)
 		{
-			UNiagaraComponent* TrailComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-				World,
-				TrailParticles,
-				Start
-			);
-			TrailComponent->SetVariableVec3(FName("ImpactPoint"), HitTarget);
-			TrailComponent->SetVariableVec3(FName("InitialSpeed"), (HitTarget - Start).GetSafeNormal() * TraceSpeed);
+			UNiagaraComponent* TrailComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(World, TrailParticles, TraceStart);
+			TrailComponent->SetVariableVec3(FName("ImpactPoint"), BeamEnd);
+			TrailComponent->SetVariableVec3(FName("InitialSpeed"), (BeamEnd - TraceStart).GetSafeNormal() * TraceSpeed);
 		}
 	}
 }
@@ -89,9 +94,9 @@ FVector AHitScanWeapon::TraceEndWithScatter(const FVector& TraceStart, const FVe
 	FVector EndLocation = SphereCenter + RandomVector;
 	FVector ToEndLocation = EndLocation - TraceStart;
 
-	DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 12, FColor::Red, true);
-	DrawDebugSphere(GetWorld(), EndLocation, 4.f, 12, FColor::Green, true);
-	DrawDebugLine(GetWorld(), TraceStart, TraceStart + ToEndLocation * TRACE_LENGTH / ToEndLocation.Size(), FColor::Cyan, true);
+	// DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 12, FColor::Red, true);
+	// DrawDebugSphere(GetWorld(), EndLocation, 4.f, 12, FColor::Green, true);
+	// DrawDebugLine(GetWorld(), TraceStart, TraceStart + ToEndLocation * TRACE_LENGTH / ToEndLocation.Size(), FColor::Cyan, true);
 
 	return FVector(TraceStart + ToEndLocation * TRACE_LENGTH / ToEndLocation.Size());
 }
