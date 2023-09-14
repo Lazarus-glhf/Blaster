@@ -10,6 +10,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Animation/AnimationAsset.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Blaster/BlasterComponent/CombatComponent.h"
 
 AWeapon::AWeapon()
 {
@@ -134,6 +135,11 @@ void AWeapon::SpendRound()
 
 void AWeapon::OnRep_Ammo()
 {
+	BlasterOwnerCharacter = BlasterOwnerCharacter == nullptr ? Cast<ABlasterCharacter>(GetOwner()) : BlasterOwnerCharacter;
+	if (BlasterOwnerCharacter && BlasterOwnerCharacter->GetCombat() && IsFull())
+	{
+		BlasterOwnerCharacter->GetCombat()->JumpToShotgunEnd();
+	}
 	SetHUDWeaponAmmo();
 }
 
@@ -221,4 +227,9 @@ void AWeapon::ReloadAmmo(int32 AmmoToReload)
 bool AWeapon::IsEmpty() const
 {
 	return Ammo <= 0;
+}
+
+bool AWeapon::IsFull() const
+{
+	return Ammo == MagCapacity;
 }
