@@ -77,24 +77,21 @@ void AProjectile::ApplyExplodeDamage()
 	// Damage only applied on server
 	if (FiringPawn && HasAuthority())
 	{
-		AController* FiringController = FiringPawn->GetController();
+		if (AController* FiringController = FiringPawn->GetController(); FiringController)
 		{
-			if (FiringController)
-			{
-				UGameplayStatics::ApplyRadialDamageWithFalloff(
-					this,
-					Damage,
-					MinDamage,
-					GetActorLocation(),
-					InnerRadius,
-					OuterRadius,
-					1.f,
-					UDamageType::StaticClass(),
-					TArray<AActor*>(),
-					this,
-					FiringController
-				);
-			}
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				this,
+				Damage,
+				MinDamage,
+				GetActorLocation(),
+				InnerRadius,
+				OuterRadius,
+				1.f,
+				UDamageType::StaticClass(),
+				TArray<AActor*>(),
+				this,
+				FiringController
+			);
 		}
 	}
 }
