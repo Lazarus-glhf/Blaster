@@ -19,9 +19,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override;
-
-	UPROPERTY(VisibleAnywhere)
-	class UProjectileMovementComponent* ProjectileMovementComponent;
 	
 private:
 	UPROPERTY(EditAnywhere)

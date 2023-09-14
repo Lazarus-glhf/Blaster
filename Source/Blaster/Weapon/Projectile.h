@@ -13,7 +13,6 @@ class BLASTER_API AProjectile : public AActor
 	
 public:	
 	AProjectile();
-	virtual void Tick(float DeltaTime) override;
 	virtual void Destroyed() override;
 	
 protected:
@@ -33,6 +32,9 @@ protected:
 	
 	UFUNCTION()
 	virtual void DestroyTimerFinished();
+
+	UFUNCTION()
+	void SpawnTrailSystem();
 	
 	UPROPERTY(EditAnywhere)
 	bool bUseDestroyTimer = true;
@@ -42,6 +44,26 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class USoundCue* ImpactSound;
+	
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* ProjectileMesh;
+
+	UPROPERTY(VisibleAnywhere)
+	class UProjectileMovementComponent* ProjectileMovementComponent;
+	
+	UPROPERTY(EditAnywhere, Category = "Explode")
+	float MinDamage = 10.f;
+
+	UPROPERTY(EditAnywhere, Category = "Explode")
+	float InnerRadius = 200.f;
+
+	UPROPERTY(EditAnywhere, Category = "Explode")
+	float OuterRadius = 500.f;
+
+	UPROPERTY(EditAnywhere, Category = "Explode")
+	float DamageFalloff = 1.f;
+
+	void ApplyExplodeDamage();
 	
 private:
 	UPROPERTY(EditAnywhere)

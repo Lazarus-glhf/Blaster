@@ -9,8 +9,7 @@
 #include "Blaster/Blaster.h"
 
 AProjectile::AProjectile()
-{
-	PrimaryActorTick.bCanEverTick = true;
+{	
 	bReplicates = true;
 
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
@@ -27,6 +26,36 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SpawnTrailSystem();
+	
+	// 慢速 Projectile 子类应当在客户端也注册碰撞事件，并忽略使用者
+	if (HasAuthority())
+	{
+		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+	}
+}
+
+void AProjectile::Destroyed()
+{
+	Super::Destroyed();
+
+	if (ImpactParticles)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactParticles, GetActorLocation(), GetActorRotation());
+	}
+	if (ImpactSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	}
+}
+
+void AProjectile::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Destroy();
+}
+
+void AProjectile::SpawnTrailSystem()
+{
 	if (TrailSystem)
 	{
 		TrailSystemComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
@@ -39,50 +68,34 @@ void AProjectile::BeginPlay()
 			false
 		);
 	}
-	
-	// 慢速 Projectile 子类应当在客户端也注册碰撞事件，并忽略使用者
-	if (HasAuthority())
-	{
-		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
-	}
 }
 
-void AProjectile::Tick(float DeltaTime)
+void AProjectile::ApplyExplodeDamage()
 {
-	Super::Tick(DeltaTime);
-}
+	const APawn* FiringPawn = GetInstigator();
 
-void AProjectile::Destroyed()
-{
-	Super::Destroyed();
-}
-
-void AProjectile::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	if (ImpactParticles)
+	// Damage only applied on server
+	if (FiringPawn && HasAuthority())
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactParticles, GetActorLocation(), GetActorRotation());
-	}
-	if (ImpactSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-	}
-	if (CollisionBox)
-	{
-		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
-	if (TrailSystemComponent)
-	{
-		TrailSystemComponent->Deactivate();
-	}
-	
-	if (bUseDestroyTimer)
-	{
-		SetUpDestroyTimer();
-	}
-	else
-	{
-		Destroy();	
+		AController* FiringController = FiringPawn->GetController();
+		{
+			if (FiringController)
+			{
+				UGameplayStatics::ApplyRadialDamageWithFalloff(
+					this,
+					Damage,
+					MinDamage,
+					GetActorLocation(),
+					InnerRadius,
+					OuterRadius,
+					1.f,
+					UDamageType::StaticClass(),
+					TArray<AActor*>(),
+					this,
+					FiringController
+				);
+			}
+		}
 	}
 }
 
@@ -100,5 +113,3 @@ void AProjectile::DestroyTimerFinished()
 {
 	Destroy();
 }
-
-

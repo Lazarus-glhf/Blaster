@@ -1,4 +1,6 @@
 ﻿#include "ProjectileRocket.h"
+
+#include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
@@ -7,9 +9,9 @@
 
 AProjectileRocket::AProjectileRocket()
 {
-	RocketMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Rocket Mesh"));
-	RocketMesh->SetupAttachment(RootComponent);
-	RocketMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Rocket Mesh"));
+	ProjectileMesh->SetupAttachment(RootComponent);
+	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	RocketMovementComponent = CreateDefaultSubobject<URocketMovementComponent>(TEXT("RocketMovementComponent"));
 	RocketMovementComponent->bRotationFollowsVelocity = true;
@@ -52,39 +54,32 @@ void AProjectileRocket::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, U
 	{
 		return;
 	}
+
+	ApplyExplodeDamage();
+	SetUpDestroyTimer();
+	
 	if (ProjectileLoopComponent && ProjectileLoopComponent->IsPlaying())
 	{
 		ProjectileLoopComponent->Stop();
 	}
-	const APawn* FiringPawn = GetInstigator();
+	if (ImpactParticles)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactParticles, GetActorLocation());
+	}
+	if (ImpactSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	}
+	if (ProjectileMesh)
+	{
+		ProjectileMesh->SetVisibility(false);
+	}
+	if (CollisionBox)
+	{
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
 
-	// Damage only applied on server
-	if (FiringPawn && HasAuthority())
-	{
-		AController* FiringController = FiringPawn->GetController();
-		{
-			if (FiringController)
-			{
-				UGameplayStatics::ApplyRadialDamageWithFalloff(
-					this,
-					Damage,
-					MinDamage,
-					GetActorLocation(),
-					InnerRadius,
-					OuterRadius,
-					1.f,
-					UDamageType::StaticClass(),
-					TArray<AActor*>(),
-					this,
-					FiringController
-				);
-			}
-		}
-	}
-	if (RocketMesh)
-	{
-		RocketMesh->SetVisibility(false);
-	}
-	
-	Super::OnHit(HitCom, OtherActor, OtherComp, NormalImpulse, Hit);
+void AProjectileRocket::Destroyed()
+{
 }

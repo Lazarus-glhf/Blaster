@@ -11,6 +11,7 @@ class BLASTER_API AProjectileRocket : public AProjectile
 
 public:
 	AProjectileRocket();
+	virtual void Destroyed() override;
 
 protected:
 	virtual void BeginPlay() override;	
@@ -28,20 +29,4 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class URocketMovementComponent* RocketMovementComponent;
 
-private:
-
-	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* RocketMesh;
-	
-	UPROPERTY(EditAnywhere)
-	float MinDamage = 10.f;
-
-	UPROPERTY(EditAnywhere)
-	float InnerRadius = 200.f;
-
-	UPROPERTY(EditAnywhere)
-	float OuterRadius = 500.f;
-
-	UPROPERTY(EditAnywhere)
-	float DamageFalloff = 1.f;
 };
