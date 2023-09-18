@@ -69,6 +69,12 @@ protected:
 
 	UFUNCTION()
 	void SetHUDCrosshairs(float DeltaTime);
+	
+	void DropEquippedWeapon();
+	void AttachActorToCharacterSocket(AActor* ActorToAttach, FName SocketName);
+	void UpdateCarriedAmmo();
+	void PlayEquipWeaponSound();
+	void ReloadEmptyWeapon();
 
 private:
 	UPROPERTY()
