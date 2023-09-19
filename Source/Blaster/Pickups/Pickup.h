@@ -43,5 +43,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	float PickupTurnRate = 45.f;
 
+	FTimerHandle BindOverlapTimer;
+	float BindOverlapTime = 0.25f;
+	void BindOverlapTimerFinished();
+
 public:
 };
