@@ -17,7 +17,6 @@ AHealthPickup::AHealthPickup()
 void AHealthPickup::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult)
@@ -26,7 +25,10 @@ void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActo
 	
 	if (const ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor); BlasterCharacter)
 	{
-		
+		if (UBuffComponent* Buff = BlasterCharacter->GetBuffComponent(); Buff)
+		{
+			Buff->Heal(HealAmount, HealingTime);
+		}
 	}
 	Destroy();
 }
