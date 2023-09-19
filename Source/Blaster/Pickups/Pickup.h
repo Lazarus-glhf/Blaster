@@ -15,11 +15,21 @@ public:
 	APickup();
 	virtual void Tick(float DeltaTime) override;
 	virtual void Destroyed() override;
+	
 protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult);
+
+	virtual void SpawnDestroyEffect();
+	
+	UPROPERTY(VisibleAnywhere)
+	class UNiagaraComponent* PickupEffectComponent;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraSystem* PickupEffect;
+	
 private:
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* OverlapSphere;
