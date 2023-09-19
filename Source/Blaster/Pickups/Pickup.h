@@ -29,6 +29,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* PickupMesh;
+	
+	UPROPERTY(EditAnywhere)
+	float PickupTurnRate = 45.f;
 
 public:
 };

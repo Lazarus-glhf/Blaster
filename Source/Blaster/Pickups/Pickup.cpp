@@ -1,8 +1,8 @@
 ﻿#include "Pickup.h"
-
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
+#include "Blaster/Weapon/WeaponTypes.h"
 
 
 APickup::APickup()
@@ -18,10 +18,14 @@ APickup::APickup()
 	OverlapSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	OverlapSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	OverlapSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	OverlapSphere->AddLocalOffset(FVector(0.f, 0.f, 85.f));
 
 	PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pickup Mesh"));
 	PickupMesh->SetupAttachment(OverlapSphere);
 	PickupMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	PickupMesh->SetRelativeScale3D(FVector(3.f));
+	PickupMesh->SetRenderCustomDepth(true);
+	PickupMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_PURPLE);
 }
 
 void APickup::BeginPlay()
@@ -46,6 +50,11 @@ void APickup::Destroyed()
 void APickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (PickupMesh)
+	{
+		PickupMesh->AddLocalRotation(FRotator(0.f, PickupTurnRate * DeltaTime, 0.f));
+	}
 }
 
 void APickup::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult)

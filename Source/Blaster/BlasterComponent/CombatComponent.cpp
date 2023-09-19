@@ -471,7 +471,6 @@ void UCombatComponent::JumpToShotgunEnd()
 
 void UCombatComponent::ThrowGrenadeFinished()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Throw grenade finished"));
 	CombatState = ECombatState::ECS_Unoccupied;
 	AttachActorToCharacterSocket(EquippedWeapon, FName("RightHandSocket"));
 }
@@ -489,7 +488,6 @@ void UCombatComponent::ServerLaunchGrenade_Implementation(const FVector_NetQuant
 {
 	if (Character && GrenadeClass && Character->GetAttachedGrenade())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Local location: %f %f %f"), Target.X, Target.Y, Target.Z)
 		const FVector StartingLocation = Character->GetAttachedGrenade()->GetComponentLocation();
 		const FVector ToTarget = Target - StartingLocation;
 		FActorSpawnParameters SpawnParameters;
@@ -497,10 +495,21 @@ void UCombatComponent::ServerLaunchGrenade_Implementation(const FVector_NetQuant
 		SpawnParameters.Instigator = Character;
 		if (UWorld* World = GetWorld(); World)
 		{
-			FVector Forward = Character->GetActorLocation();
-			UE_LOG(LogTemp, Warning, TEXT("Character: %f %f %f, Start: %f %f %f"), Forward.X, Forward.Y, Forward.Z, StartingLocation.X, StartingLocation.Y, StartingLocation.Z)
 			World->SpawnActor<AProjectile>(GrenadeClass, StartingLocation, ToTarget.Rotation(), SpawnParameters);
 		}
+	}
+}
+
+void UCombatComponent::PickupAmmo(EWeaponType WeaponType, int32 AmmoAmount)
+{
+	if (CarriedAmmoMap.Contains(WeaponType))
+	{
+		CarriedAmmoMap[WeaponType] = FMath::Clamp(CarriedAmmoMap[WeaponType] + AmmoAmount, 0, MaxCarriedAmmo);
+		UpdateCarriedAmmo();
+	}
+	if (EquippedWeapon && EquippedWeapon->IsEmpty() && EquippedWeapon->GetWeaponType() == WeaponType)
+	{
+		Reload();
 	}
 }
 
