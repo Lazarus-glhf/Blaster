@@ -104,7 +104,6 @@ void AWeapon::SetWeaponState(EWeaponState State)
 		WeaponMesh->SetSimulatePhysics(false);
 		WeaponMesh->SetEnableGravity(false);
 		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		EnableCustomDepth(false);
 		break;
 	case EWeaponState::EWS_Dropped:
 		if (HasAuthority())
@@ -114,6 +113,7 @@ void AWeapon::SetWeaponState(EWeaponState State)
 		WeaponMesh->SetSimulatePhysics(true);
 		WeaponMesh->SetEnableGravity(true);
 		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetWeaponMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 		EnableCustomDepth(true);
 		break;
 	case EWeaponState::EWS_Max:
@@ -125,6 +125,8 @@ void AWeapon::OnRep_WeaponState()
 {
 	switch (WeaponState)
 	{
+	case EWeaponState::EWS_Initial:
+		break;
 	case EWeaponState::EWS_Equipped:
 		ShowPickupWidget(false);
 		WeaponMesh->SetSimulatePhysics(false);
@@ -137,6 +139,8 @@ void AWeapon::OnRep_WeaponState()
 		WeaponMesh->SetEnableGravity(true);
 		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		break;
+	case EWeaponState::EWS_Max:
+		break;;
 	}
 }
 
@@ -166,7 +170,11 @@ void AWeapon::OnRep_Owner()
 	}
 	else
 	{
-		SetHUDWeaponAmmo();	
+		BlasterOwnerCharacter = BlasterOwnerCharacter == nullptr ? Cast<ABlasterCharacter>(Owner) : BlasterOwnerCharacter;
+		if (BlasterOwnerCharacter && BlasterOwnerCharacter->GetEquippedWeapon() && BlasterOwnerCharacter->GetEquippedWeapon() == this)
+		{
+			SetHUDWeaponAmmo();	
+		}
 	}
 }
 

@@ -239,14 +239,7 @@ void ABlasterCharacter::EquipWeapon(const FInputActionValue& Value)
 	if (bDisableGameplay) return;
 	if (Combat)
 	{
-		if (HasAuthority())
-		{
-			Combat->EquipWeapon(OverlappingWeapon);	
-		}
-		else
-		{
-			ServerEquipButtonPress();
-		}
+		ServerEquipButtonPress();
 	}
 }
 
