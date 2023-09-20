@@ -104,7 +104,7 @@ void ABlasterCharacter::BeginPlay()
 		if (HasAuthority())
 		{
 			PlayerController = Cast<APlayerController>(UGameplayStatics::GetPlayerController(this, 0));
-			BlasterPlayerController = Cast<ABlasterPlayerController>(PlayerController);
+			// BlasterPlayerController = Cast<ABlasterPlayerController>(PlayerController);
 			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 			{
 				Subsystem->AddMappingContext(DefaultMappingContext, 0);
