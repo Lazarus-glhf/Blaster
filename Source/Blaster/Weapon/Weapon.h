@@ -27,6 +27,7 @@ public:
 	AWeapon();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void OnRep_Owner() override;
+	void SetHUDWeaponAmmo();
 	void ShowPickupWidget(bool bShowWidget);
 	virtual void Fire(const FVector& HitTarget);
 	void Dropped();
@@ -56,7 +57,7 @@ public:
 	float ZoomFOV = 30.f;
 
 	UPROPERTY(EditAnywhere)
-	float  ZoomInterpSpeed = 20.f;
+	float ZoomInterpSpeed = 20.f;
 
 	/**
 	 * Automatic fire
@@ -132,7 +133,6 @@ private:
 
 public:
 	void SetWeaponState(EWeaponState State);
-	void SetHUDWeaponAmmo();
 	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return  WeaponMesh; }
 	FORCEINLINE float GetZoomedFOV() const { return ZoomFOV; }
