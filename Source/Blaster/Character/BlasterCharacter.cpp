@@ -442,24 +442,19 @@ void ABlasterCharacter::Jump()
 
 void ABlasterCharacter::ServerEliminated()
 {
-	if (Combat && Combat->EquippedWeapon)
+	if (Combat)
 	{
-		if (Combat->EquippedWeapon->bDestroyWeapon)
+		if (Combat->EquippedWeapon)
 		{
-			Combat->EquippedWeapon->Destroy();
+			DropOrDestroyWeapon(Combat->EquippedWeapon);
 		}
-		else
+		if (Combat->SecondaryWeapon)
 		{
-			Combat->EquippedWeapon->Dropped();	
+			DropOrDestroyWeapon(Combat->SecondaryWeapon);
 		}
 	}
 	MulticastEliminated();
-	GetWorldTimerManager().SetTimer(
-		EliminatedTimer,
-		this,
-		&ABlasterCharacter::EliminatedTimerFinished,
-		EliminatedDelay
-		);
+	GetWorldTimerManager().SetTimer(EliminatedTimer, this, &ABlasterCharacter::EliminatedTimerFinished, EliminatedDelay);
 }
 
 void ABlasterCharacter::MulticastEliminated_Implementation()
@@ -523,6 +518,19 @@ void ABlasterCharacter::EliminatedTimerFinished()
 	if (BlasterGameMode)
 	{
 		BlasterGameMode->RequestRespawn(this, Controller);
+	}
+}
+
+void ABlasterCharacter::DropOrDestroyWeapon(AWeapon* Weapon)
+{
+	if (Weapon == nullptr) return;
+	if (Weapon->bDestroyWeapon)
+	{
+		Weapon->Destroy();
+	}
+	else
+	{
+		Weapon->Dropped();	
 	}
 }
 

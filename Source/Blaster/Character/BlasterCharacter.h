@@ -60,6 +60,7 @@ protected:
 	void PollInit();
 	
 	void RotateInPlace(float DeltaTime);
+	void DropOrDestroyWeapon(AWeapon* Weapon);
 
 	//---------- Input-----------------
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
