@@ -92,6 +92,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* TossingGrenadeAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SwapWeaponAction;
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void EquipWeapon(const FInputActionValue& Value);
@@ -101,6 +104,7 @@ protected:
 	void FireButtonPressed(const FInputActionValue& Value);
 	void FireButtonReleased(const FInputActionValue& Value);
 	void GrenadeButtonPressed(const FInputActionValue& Value);
+	void SwapWeaponButtonPressed(const FInputActionValue& Value);
 	void ReloadButtonPressed();
 	void AimOffset(float DeltaTime);
 	void SimProxiesTurn();

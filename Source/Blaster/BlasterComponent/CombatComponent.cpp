@@ -211,6 +211,22 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 	Character->bUseControllerRotationYaw = true;
 }
 
+void UCombatComponent::SwapWeapons()
+{
+	AWeapon* TempWeapon = EquippedWeapon;
+	EquippedWeapon = SecondaryWeapon;
+	SecondaryWeapon = TempWeapon;
+
+	EquippedWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
+	AttachActorToCharacterSocket(EquippedWeapon, FName("RightHandSocket"));
+	EquippedWeapon->SetHUDWeaponAmmo();
+	UpdateCarriedAmmo();
+	PlayEquipWeaponSound(EquippedWeapon);
+
+	SecondaryWeapon->SetWeaponState(EWeaponState::EWS_EquippedSecondary);
+	AttachActorToCharacterSocket(SecondaryWeapon, FName("BackpackSocket"));
+}
+
 void UCombatComponent::EquipPrimaryWeapon(AWeapon* WeaponToEquip)
 {
 	if (WeaponToEquip == nullptr) return;
@@ -223,28 +239,17 @@ void UCombatComponent::EquipPrimaryWeapon(AWeapon* WeaponToEquip)
 	UpdateCarriedAmmo();
 	PlayEquipWeaponSound(WeaponToEquip);
 	ReloadEmptyWeapon();
-	EquippedWeapon->EnableCustomDepth(false);
 }
 
 void UCombatComponent::EquipSecondaryWeapon(AWeapon* WeaponToEquip)
 {
 	if (WeaponToEquip == nullptr) return;
-	if (WeaponToEquip == EquippedWeapon || SecondaryWeapon == EquippedWeapon)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Weapon to equip is wrong"));
-	}
+	
 	SecondaryWeapon = WeaponToEquip;
-	SecondaryWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
+	SecondaryWeapon->SetWeaponState(EWeaponState::EWS_EquippedSecondary);
 	AttachActorToCharacterSocket(WeaponToEquip, FName("BackpackSocket"));
 	PlayEquipWeaponSound(WeaponToEquip);
-	if (SecondaryWeapon->GetWeaponMesh())
-	{
-		SecondaryWeapon->GetWeaponMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_TAN);
-		SecondaryWeapon->GetWeaponMesh()->MarkRenderStateDirty();
-	}
-
-	if (EquippedWeapon == nullptr) return;
-	EquippedWeapon->SetOwner(Character);
+	SecondaryWeapon->SetOwner(Character);
 }
 
 void UCombatComponent::OnRep_EquippedWeapon()
@@ -257,6 +262,8 @@ void UCombatComponent::OnRep_EquippedWeapon()
 		Character->bUseControllerRotationYaw = true;
 		PlayEquipWeaponSound(EquippedWeapon);
 		EquippedWeapon->EnableCustomDepth(false);
+
+		EquippedWeapon->SetHUDWeaponAmmo();
 	}
 }
 
@@ -264,7 +271,7 @@ void UCombatComponent::OnRep_SecondaryWeapon()
 {
 	if (SecondaryWeapon && Character)
 	{
-		SecondaryWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
+		SecondaryWeapon->SetWeaponState(EWeaponState::EWS_EquippedSecondary);
 		AttachActorToCharacterSocket(SecondaryWeapon, FName("BackpackSocket"));
 		PlayEquipWeaponSound(SecondaryWeapon);
 	}
@@ -655,6 +662,11 @@ void UCombatComponent::UpdateHUDGrenades()
 	{
 		Controller->SetHUDGrenades(Grenades);
 	}
+}
+
+bool UCombatComponent::ShouldSwapWeapons()
+{
+	return (EquippedWeapon != nullptr && SecondaryWeapon != nullptr);
 }
 
 void UCombatComponent::ShowAttachedGrenade(bool bShowGrenade)

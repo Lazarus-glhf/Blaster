@@ -208,6 +208,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ThisClass::FireButtonReleased);
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &ThisClass::ReloadButtonPressed);
 		EnhancedInputComponent->BindAction(TossingGrenadeAction, ETriggerEvent::Started, this, &ThisClass::GrenadeButtonPressed);
+		EnhancedInputComponent->BindAction(SwapWeaponAction, ETriggerEvent::Started, this, &ThisClass::SwapWeaponButtonPressed);
 	}
 }
 
@@ -229,7 +230,7 @@ void ABlasterCharacter::Move(const FInputActionValue& Value)
 
 void ABlasterCharacter::Look(const FInputActionValue& Value)
 {
-	FVector2D LookRotation = Value.Get<FVector2D>();
+	const FVector2D LookRotation = Value.Get<FVector2D>();
 	AddControllerYawInput(LookRotation.X);
 	AddControllerPitchInput(LookRotation.Y);
 }
@@ -298,6 +299,14 @@ void ABlasterCharacter::GrenadeButtonPressed(const FInputActionValue& Value)
 	if (Combat)
 	{
 		Combat->ThrowGrenade();
+	}
+}
+
+void ABlasterCharacter::SwapWeaponButtonPressed(const FInputActionValue& Value)
+{
+	if (Combat && Combat->ShouldSwapWeapons())
+	{
+		Combat->SwapWeapons();
 	}
 }
 
@@ -768,7 +777,10 @@ void ABlasterCharacter::ServerEquipButtonPress_Implementation()
 {
 	if (Combat)
 	{
-		Combat->EquipWeapon(OverlappingWeapon);
+		if (OverlappingWeapon)
+		{
+			Combat->EquipWeapon(OverlappingWeapon);	
+		}
 	}
 }
 
