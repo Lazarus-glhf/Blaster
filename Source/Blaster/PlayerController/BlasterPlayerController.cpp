@@ -54,22 +54,27 @@ void ABlasterPlayerController::OnPossess(APawn* InPawn)
 
 void ABlasterPlayerController::PollInit()
 {
-	if (CharacterOverlay == nullptr)
+	if (CharacterOverlay) return;
+	if (BlasterHUD && BlasterHUD->CharacterOverlay)
 	{
-		if (BlasterHUD && BlasterHUD->CharacterOverlay)
+		if (CharacterOverlay = BlasterHUD->CharacterOverlay; CharacterOverlay)
 		{
-			CharacterOverlay = BlasterHUD->CharacterOverlay;
-			if (CharacterOverlay)
+			SetHUDHealth(HUDHealth, HUDMaxHealth);
+			SetHUDScore(HUDScore);
+			SetHUDDefeats(HUDDefeats);
+			if (bInitializeCarriedAmmo)
 			{
-				SetHUDHealth(HUDHealth, HUDMaxHealth);
-				SetHUDScore(HUDScore);
-				SetHUDDefeats(HUDDefeats);
+				SetHUDCarriedAmmo(HUDCarriedAmmo);
+			}
+			if (bInitializeWeaponAmmo)
+			{
+				SetHUDWeaponAmmo(HUDWeaponAmmo);
+			}
 
-				const ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(GetPawn());
-				if (BlasterCharacter && BlasterCharacter->GetCombat())
-				{
-					SetHUDGrenades(BlasterCharacter->GetCombat()->GetGrenades());	
-				}
+			const ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(GetPawn());
+			if (BlasterCharacter && BlasterCharacter->GetCombat())
+			{
+				SetHUDGrenades(BlasterCharacter->GetCombat()->GetGrenades());	
 			}
 		}
 	}
@@ -195,6 +200,11 @@ void ABlasterPlayerController::SetHUDWeaponAmmo(int32 Ammo)
 		const FString WeaponAmmoText = FString::Printf(TEXT("%d"), Ammo);
 		BlasterHUD->CharacterOverlay->WeaponAmmoAmount->SetText(FText::FromString(WeaponAmmoText));
 	}
+	else
+	{
+		bInitializeWeaponAmmo = true;
+		HUDWeaponAmmo = Ammo;
+	}
 }
 
 void ABlasterPlayerController::SetHUDCarriedAmmo(int32 Ammo)
@@ -207,6 +217,11 @@ void ABlasterPlayerController::SetHUDCarriedAmmo(int32 Ammo)
 	{
 		const FString CarriedAmmoText = FString::Printf(TEXT("%d"), Ammo);
 		BlasterHUD->CharacterOverlay->CarriedAmmoAmount->SetText(FText::FromString(CarriedAmmoText));
+	}
+	else
+	{
+		bInitializeCarriedAmmo = true;
+		HUDCarriedAmmo = Ammo;
 	}
 }
 

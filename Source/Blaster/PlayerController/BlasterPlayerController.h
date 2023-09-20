@@ -90,4 +90,8 @@ private:
 	int HUDScore;
 	int32 HUDDefeats;
 	int32 HUDGrenades;
+	float HUDCarriedAmmo;
+	bool bInitializeCarriedAmmo;
+	float HUDWeaponAmmo;
+	bool bInitializeWeaponAmmo = false;
  };
