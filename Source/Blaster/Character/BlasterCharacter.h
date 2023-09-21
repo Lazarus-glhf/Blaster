@@ -48,6 +48,9 @@ public:
 
 	void SpawnDefaultWeapon();
 	
+	UPROPERTY()
+	TMap<FName, class UBoxComponent*> HitCollisionBoxes;
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -168,7 +171,6 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* foot_r;
-
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class USpringArmComponent* CameraBoom;
@@ -182,11 +184,17 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
 	class AWeapon* OverlappingWeapon;
 
+	/**
+	 * Blaster Components
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCombatComponent* Combat;
 
 	UPROPERTY(VisibleAnywhere)
 	class UBuffComponent* Buff;
+
+	UPROPERTY(VisibleAnywhere)
+	class ULagCompensationComponent* LagCompensation;
 
 	float AO_Yaw;
 	float InterpAO_Yaw;
