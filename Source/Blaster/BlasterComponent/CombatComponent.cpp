@@ -342,11 +342,43 @@ void UCombatComponent::Fire()
 	if (EquippedWeapon && CanFire())
 	{
 		bCanFire = false;
-		ServerFire(HitTarget);
-		LocalFire(HitTarget);
+
+		if (EquippedWeapon->FireType == EFireType::EFT_Projectile)
+		{
+			FireProjectileWeapon();
+		}
+		else if (EquippedWeapon->FireType == EFireType::EFT_HitScan)
+		{
+			FireHitScanWeapon();
+		}
+		else if (EquippedWeapon->FireType == EFireType::EFT_Shotgun)
+		{
+			FireShotgun();
+		}
+		
 		StartFireTimer();
 		FireCounter += 1.0f;
 	}
+}
+
+void UCombatComponent::FireProjectileWeapon()
+{
+	ServerFire(HitTarget);
+	LocalFire(HitTarget);
+}
+
+void UCombatComponent::FireHitScanWeapon()
+{
+	if (EquippedWeapon)
+	{
+		HitTarget = EquippedWeapon->bUseScatter ? EquippedWeapon->TraceEndWithScatter(HitTarget) : HitTarget;
+		LocalFire(HitTarget);
+		ServerFire(HitTarget);
+	}
+}
+
+void UCombatComponent::FireShotgun()
+{
 }
 
 void UCombatComponent::StartFireTimer()
@@ -374,6 +406,7 @@ void UCombatComponent::MulticastFire_Implementation(const FVector_NetQuantize& T
 
 void UCombatComponent::LocalFire(const FVector_NetQuantize& TraceHitTarget)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Local Fire"));
 	if (EquippedWeapon == nullptr) return;
 	if (Character && CombatState == ECombatState::ECS_Unoccupied)
 	{
