@@ -379,6 +379,7 @@ void UCombatComponent::FireHitScanWeapon()
 
 void UCombatComponent::FireShotgun()
 {
+	
 }
 
 void UCombatComponent::StartFireTimer()
@@ -400,7 +401,7 @@ void UCombatComponent::ServerFire_Implementation(const FVector_NetQuantize& Trac
 void UCombatComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
 	// Is the character controlled by the player who fired the weapon
-	if (Character && Character->IsLocallyControlled() && !Character->HasAuthority()) return;
+	if (Character && Character->IsLocallyControlled() && Character->HasAuthority()) return;
 	LocalFire(TraceHitTarget);
 }
 
