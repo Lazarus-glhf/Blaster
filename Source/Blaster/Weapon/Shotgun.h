@@ -11,7 +11,8 @@ class BLASTER_API AShotgun : public AHitScanWeapon
 
 public:
 	virtual void Fire(const FVector& HitTarget) override;
-
+	void ShotgunTraceEndWithScatter(const FVector& HitTarget, TArray<FVector>& HitTargets);
+	
 private:
 	UPROPERTY(EditAnywhere, Category = "Weapon Scatter")
 	uint32 NumOfBulletBalls = 10;
