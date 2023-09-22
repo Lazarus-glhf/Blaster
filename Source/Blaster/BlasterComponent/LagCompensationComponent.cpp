@@ -1,7 +1,9 @@
 ﻿#include "LagCompensationComponent.h"
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Blaster/Weapon/Weapon.h"
 
 
 ULagCompensationComponent::ULagCompensationComponent()
@@ -237,9 +239,27 @@ FServerSideRewindResult ULagCompensationComponent::ServerSideRewind(ABlasterChar
 	
 }
 
+void ULagCompensationComponent::ServerScoreRequest_Implementation(ABlasterCharacter* HitCharacter, const FVector_NetQuantize& TraceStart, const FVector_NetQuantize& HitLocation, float HitTime, AWeapon* DamageCauser)
+{
+	FServerSideRewindResult Confirm = ServerSideRewind(HitCharacter, TraceStart, HitLocation, HitTime);
+
+	if (HitCharacter && Confirm.bHitConfirmed)
+	{
+		UGameplayStatics::ApplyDamage(HitCharacter, DamageCauser->GetDamage(), Character->Controller, DamageCauser, UDamageType::StaticClass());
+	}
+}
+
 void ULagCompensationComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	ServerSaveFramePackage();
+}
+
+void ULagCompensationComponent::ServerSaveFramePackage()
+{
+	if (Character == nullptr || !Character->HasAuthority()) return;
+	
 	FFramePackage ThisFrame;
 	SaveFramePackage(ThisFrame);
 	FrameHistory.AddHead(ThisFrame);
@@ -249,5 +269,5 @@ void ULagCompensationComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 		FrameHistory.RemoveNode(FrameHistory.GetTail());
 		HistoryLength = FrameHistory.GetHead()->GetValue().Time - FrameHistory.GetTail()->GetValue().Time;
 	}
-	ShowFramePackage(ThisFrame, FColor::Red);
+	// ShowFramePackage(ThisFrame, FColor::Red);
 }

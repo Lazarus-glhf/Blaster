@@ -3,6 +3,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Blaster/Character/BlasterCharacter.h"
+#include "Blaster/BlasterComponent/LagCompensationComponent.h"
+#include "Blaster/PlayerController/BlasterPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
@@ -27,18 +29,33 @@ void AHitScanWeapon::Fire(const FVector& HitTarget)
 		FHitResult FireHit;
 		WeaponTraceHit(Start, HitTarget, FireHit);
 
-		ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(FireHit.GetActor());
-		if (BlasterCharacter)
+		ABlasterCharacter* HitCharacter = Cast<ABlasterCharacter>(FireHit.GetActor());
+		if (HitCharacter && InstigaterController)
 		{
-			if (HasAuthority())
+			if (HasAuthority() && !bUseServerSideRewind)
 			{
 				UGameplayStatics::ApplyDamage(
-					BlasterCharacter,
+					HitCharacter,
 					Damage,
 					InstigaterController,
 					this,
 					UDamageType::StaticClass()
 				);	
+			}
+			if (!HasAuthority() && bUseServerSideRewind)
+			{
+				BlasterOwnerCharacter = BlasterOwnerCharacter == nullptr ? Cast<ABlasterCharacter>(OwnerPawn) : BlasterOwnerCharacter;
+				BlasterOwnerPlayerController = BlasterOwnerPlayerController == nullptr ? Cast<ABlasterPlayerController>(InstigaterController) : BlasterOwnerPlayerController;
+				if (BlasterOwnerPlayerController && BlasterOwnerCharacter && HitCharacter->GetLagCompensationComponent())
+				{
+					BlasterOwnerCharacter->GetLagCompensationComponent()->ServerScoreRequest(
+						HitCharacter,
+						Start,
+						HitTarget,
+						BlasterOwnerPlayerController->GetServerTime() - BlasterOwnerPlayerController->SingleTripTime,
+						this
+					);
+				}
 			}
 		}
 		if (ImpactParticles)
@@ -73,6 +90,7 @@ void AHitScanWeapon::WeaponTraceHit(const FVector& TraceStart, const FVector& Hi
 		{
 			BeamEnd = OutHit.ImpactPoint;
 		}
+		DrawDebugSphere(GetWorld(), BeamEnd, 10.f, 10, FColor::Red, true);
 
 		// Spawn trail fx
 		if (TrailParticles)

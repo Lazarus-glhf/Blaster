@@ -18,9 +18,6 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class USoundCue* HitSound;
-	
-	UPROPERTY(EditAnywhere)
-	float Damage = 15.f;
 
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* ImpactParticles;

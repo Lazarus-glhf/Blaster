@@ -104,6 +104,7 @@ public:
 	bool bUseScatter = false;
 
 	FVector TraceEndWithScatter(const FVector& HitTarget);
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnWeaponStateSet();
@@ -116,6 +117,17 @@ protected:
 
 	UFUNCTION()
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UPROPERTY(EditAnywhere)
+	float Damage = 15.f;
+	
+	UPROPERTY(EditAnywhere)
+	bool bUseServerSideRewind = false;
+	
+	UPROPERTY()
+	class ABlasterCharacter* BlasterOwnerCharacter;
+	UPROPERTY()
+	class ABlasterPlayerController* BlasterOwnerPlayerController;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
@@ -157,11 +169,6 @@ private:
 	// Incremented in SpendRound, decremented in ClientUpdateAmmo
 	int32 Sequence = 0;
 
-	UPROPERTY()
-	class ABlasterCharacter* BlasterOwnerCharacter;
-	UPROPERTY()
-	class ABlasterPlayerController* BlasterOwnerPlayerController;
-
 	UPROPERTY(EditAnywhere)
 	EWeaponType WeaponType;
 
@@ -176,4 +183,5 @@ public:
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
 	FORCEINLINE int32 GetAmmo() const { return Ammo; }
 	FORCEINLINE int32 GetMagCapacity() const { return MagCapacity; }
+	FORCEINLINE float GetDamage() const { return Damage; }
 };
