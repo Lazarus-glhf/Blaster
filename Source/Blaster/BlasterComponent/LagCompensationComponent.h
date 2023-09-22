@@ -41,6 +41,7 @@ public:
 	friend class ABlasterCharacter;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void ShowFramePackage(const FFramePackage& Package, const FColor& Color);
+	void ServerSideRewind(class ABlasterCharacter* HitCharacter, const FVector_NetQuantize& TraceStart, const FVector_NetQuantize& HitLocation, const float HitTime);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -53,6 +54,7 @@ private:
 	UPROPERTY()
 	class ABlasterPlayerController* Controller;
 
+	// 头插更新，Head.Time > Tail.Time
 	TDoubleLinkedList<FFramePackage> FrameHistory;
 
 	UPROPERTY(EditAnywhere)
