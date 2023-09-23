@@ -96,4 +96,8 @@ private:
 	float DestroyTime = 0.5f;
 	
 	FTimerHandle TrailDestroyTimer;
+
+public:
+	FORCEINLINE void SetDamage(float InDamage) { Damage = InDamage; }
+	FORCEINLINE float GetDamage() const { return Damage; }
 };

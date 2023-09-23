@@ -53,11 +53,13 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 			}
 		}
 
+		// Apply damage 仅服务器执行
 		TArray<ABlasterCharacter*> HitCharacters;
 		for (auto HitPair : HitMap)
 		{
 			if (HitPair.Key && InstigatorController)
 			{
+				// 若为服务器且未启用 SSR 则直接生成伤害，否则跳过
 				if (HasAuthority() && !bUseServerSideRewind)
 				{
 					UGameplayStatics::ApplyDamage(HitPair.Key, Damage * HitPair.Value, InstigatorController, this, UDamageType::StaticClass());	
@@ -65,6 +67,7 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 				HitCharacters.Add(HitPair.Key);
 			}
 		}
+		// 请求服务器 LagCompensation
 		if (!HasAuthority() && bUseServerSideRewind)
 		{
 			OwnerCharacter = OwnerCharacter == nullptr ? Cast<ABlasterCharacter>(OwnerPawn) : OwnerCharacter;
