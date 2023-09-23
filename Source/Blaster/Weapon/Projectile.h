@@ -81,13 +81,13 @@ protected:
 	float DamageFalloff = 1.f;
 
 	void ApplyExplodeDamage();
+
+	UPROPERTY()
+	class UNiagaraComponent* TrailSystemComponent;
 	
 private:
 	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* TrailSystem;
-
-	UPROPERTY()
-	class UNiagaraComponent* TrailSystemComponent;
 
 	/**
 	 * @brief Projectile 销毁延时

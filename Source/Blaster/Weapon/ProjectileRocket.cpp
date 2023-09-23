@@ -1,5 +1,6 @@
 ﻿#include "ProjectileRocket.h"
 
+#include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
@@ -97,6 +98,10 @@ void AProjectileRocket::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, U
 	if (ProjectileMesh)
 	{
 		ProjectileMesh->SetVisibility(false);
+	}
+	if (TrailSystemComponent)
+	{
+		TrailSystemComponent->Deactivate();
 	}
 	if (CollisionBox)
 	{

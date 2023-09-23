@@ -117,7 +117,7 @@ void AProjectile::SpawnTrailSystem()
 void AProjectile::ApplyExplodeDamage()
 {
 	const APawn* FiringPawn = GetInstigator();
-
+	
 	// Damage only applied on server
 	if (FiringPawn && HasAuthority())
 	{
