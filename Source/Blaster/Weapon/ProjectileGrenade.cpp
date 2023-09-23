@@ -40,7 +40,10 @@ void AProjectileGrenade::Destroyed()
 	Super::Destroyed();
 }
 
+#if WITH_EDITOR
 void AProjectileGrenade::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
+#endif
+
