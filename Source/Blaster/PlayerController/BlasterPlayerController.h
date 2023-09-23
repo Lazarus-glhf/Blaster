@@ -41,8 +41,23 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
-	void SetHUDTime();
-	void PollInit();
+
+	/**
+	 * Controller Input
+	 */
+	virtual void SetupInputComponent() override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* DefaultMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* JumpAction;
+
+	void ShowReturnToMainMenu();
+	UPROPERTY(EditAnywhere, Category = HUD)
+	TSubclassOf<class UUserWidget> ReturnToMainMenuWidgetClass;
+	UPROPERTY()
+	class UReturnToMainMenu* ReturnToMainMenuWidget;
+	bool bReturnToMainMenuOpen = false;
 
 	/**
 	 * Sync time between client and server
@@ -63,6 +78,8 @@ protected:
 	
 	float TimeSyncRunningTime = 0.f;
 	void CheckTimeSync(const float DeltaTime);
+	void SetHUDTime();
+	void PollInit();
 
 	UFUNCTION(Server, Reliable)
 	void ServerCheckMatchState();
@@ -73,6 +90,7 @@ protected:
 	void HighPingWarning();
 	void StopHighPingWarning();
 	void CheckPing(float DeltaTime);
+	
 private:
 	UPROPERTY()
 	class ABlasterHUD* BlasterHUD;

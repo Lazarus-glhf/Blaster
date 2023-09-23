@@ -58,6 +58,9 @@ struct FShotgunServerSideRewindResult
 	TMap<ABlasterCharacter*, uint32> BodyShots;
 };
 
+// TODO Client side predicting reload
+// TODO Set UnOccupied Status Immediately when reloading
+// TODO Rockets & Grenades
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class BLASTER_API ULagCompensationComponent : public UActorComponent
 {
