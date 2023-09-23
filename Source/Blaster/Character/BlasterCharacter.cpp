@@ -403,10 +403,21 @@ void ABlasterCharacter::GrenadeButtonPressed(const FInputActionValue& Value)
 
 void ABlasterCharacter::SwapWeaponButtonPressed(const FInputActionValue& Value)
 {
-	if (Combat && Combat->ShouldSwapWeapons())
+	if (Combat)
 	{
-		Combat->SwapWeapons();
+		ServerSwapWeapon();
+		if (Combat->ShouldSwapWeapons() && !HasAuthority() && Combat->CombatState == ECombatState::ECS_Unoccupied)
+		{
+			PlaySwapMontage();
+			Combat->CombatState = ECombatState::ECS_SwappingWeapons;
+			bFinishedSwapping = false;
+		}
 	}
+}
+
+void ABlasterCharacter::ServerSwapWeapon_Implementation()
+{
+	Combat->SwapWeapons();
 }
 
 void ABlasterCharacter::ReloadButtonPressed()
@@ -697,6 +708,15 @@ void ABlasterCharacter::PlayThrowGrenadeMontage()
 	if (AnimInstance && ThrowGrenadeMontage)
 	{
 		AnimInstance->Montage_Play(ThrowGrenadeMontage);
+	}
+}
+
+void ABlasterCharacter::PlaySwapMontage()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && SwapWeaponMontage)
+	{
+		AnimInstance->Montage_Play(SwapWeaponMontage);
 	}
 }
 

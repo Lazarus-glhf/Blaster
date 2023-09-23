@@ -23,10 +23,15 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PostInitializeComponents() override;
+
+	/**
+	 * Play Montages
+	 */
 	void PlayFireMontage(bool bAiming);
 	void PlayReloadMontage();
 	void PlayEliminatedMontage();
 	void PlayThrowGrenadeMontage();
+	void PlaySwapMontage();
 
 	virtual void OnRep_ReplicatedMovement() override;
 
@@ -50,6 +55,8 @@ public:
 	
 	UPROPERTY()
 	TMap<FName, class UBoxComponent*> HitCollisionBoxes;
+
+	bool bFinishedSwapping = false;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -109,6 +116,8 @@ protected:
 	void FireButtonReleased(const FInputActionValue& Value);
 	void GrenadeButtonPressed(const FInputActionValue& Value);
 	void SwapWeaponButtonPressed(const FInputActionValue& Value);
+	UFUNCTION(Server, Reliable)
+	void ServerSwapWeapon();
 	void ReloadButtonPressed();
 	void AimOffset(float DeltaTime);
 	void SimProxiesTurn();
@@ -171,6 +180,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* foot_r;
+	
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class USpringArmComponent* CameraBoom;
@@ -221,6 +231,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = Combat)
 	UAnimMontage* ThrowGrenadeMontage;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	UAnimMontage* SwapWeaponMontage;
 
 	UFUNCTION()
 	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);

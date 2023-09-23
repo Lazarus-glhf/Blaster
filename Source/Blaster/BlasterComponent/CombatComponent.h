@@ -23,10 +23,17 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void SwapWeapons();
+	
 	void Reload();
 
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishSwap();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishAttachWeapons();
 
 	void FireButtonPressed(bool bPressed);
 
