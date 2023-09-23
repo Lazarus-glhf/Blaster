@@ -11,3 +11,5 @@ clean-cache.bat
 Blaster.sln.DotSettings
 Content/Maps/Stylized_Egypt_Demo_BuiltData.uasset
 Blaster.sln.DotSettings.user
+Content/Maps/DesertLobbyMap_BuiltData.uasset
+Content/Maps/DesertStartMap_BuiltData.uasset

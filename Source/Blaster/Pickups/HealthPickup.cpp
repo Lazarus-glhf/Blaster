@@ -26,6 +26,7 @@ void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActo
 			Buff->Heal(HealAmount, HealingTime);
 		}
 	}
+	SpawnDestroyEffectAttached(Cast<ABlasterCharacter>(OtherActor));
 	Destroy();
 }
 
@@ -36,6 +37,7 @@ void AHealthPickup::Tick(float DeltaTime)
 
 void AHealthPickup::Destroyed()
 {
-	Super::Destroyed();
+	APickup::Destroyed();
+	PlayDestroySound();
 }
 

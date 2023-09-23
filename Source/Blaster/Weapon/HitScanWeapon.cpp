@@ -93,7 +93,6 @@ void AHitScanWeapon::WeaponTraceHit(const FVector& TraceStart, const FVector& Hi
 		{
 			BeamEnd = OutHit.ImpactPoint;
 		}
-		DrawDebugSphere(GetWorld(), BeamEnd, 10.f, 10, FColor::Red, true);
 
 		// Spawn trail fx
 		if (TrailParticles)

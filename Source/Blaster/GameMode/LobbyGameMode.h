@@ -16,4 +16,11 @@ class BLASTER_API ALobbyGameMode : public AGameMode
 
 public:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+private:
+	UPROPERTY(EditAnywhere)
+	uint32 PlayersToWait = 2;
+
+	UPROPERTY(EditAnywhere)
+	FString TravelMapPath = FString("/Game/Maps/DesertBattleMap?listen");
 };

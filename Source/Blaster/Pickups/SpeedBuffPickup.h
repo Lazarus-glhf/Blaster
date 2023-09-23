@@ -11,6 +11,7 @@ class BLASTER_API ASpeedBuffPickup : public APickup
 
 public:
 	ASpeedBuffPickup();
+	virtual void Destroyed() override;
 	virtual void Tick(float DeltaTime) override;
 	
 protected:

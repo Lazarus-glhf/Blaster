@@ -9,13 +9,13 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	Super::PostLogin(NewPlayer);
 
 	int32 NumOfPlayers = GameState.Get()->PlayerArray.Num();
-	if (NumOfPlayers == 2)
+	if (NumOfPlayers == PlayersToWait)
 	{
 		
 		if (UWorld* World = GetWorld(); World)
 		{
 			bUseSeamlessTravel = true;
-			World->ServerTravel(FString("/Game/Maps/BlasterMap?listen"));
+			World->ServerTravel(TravelMapPath);
 		}
 	}
 }

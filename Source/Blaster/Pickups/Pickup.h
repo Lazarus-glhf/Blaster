@@ -23,6 +23,8 @@ protected:
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult);
 
 	virtual void SpawnDestroyEffect();
+	virtual void SpawnDestroyEffectAttached(class ABlasterCharacter* AttachCharacter);
+	virtual void PlayDestroySound();
 	
 	UPROPERTY(VisibleAnywhere)
 	class UNiagaraComponent* PickupEffectComponent;

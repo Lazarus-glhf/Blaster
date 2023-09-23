@@ -1,7 +1,9 @@
 ﻿#include "Pickup.h"
 
 #include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Blaster/Character/BlasterCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
@@ -47,10 +49,8 @@ void APickup::BeginPlay()
 void APickup::Destroyed()
 {
 	Super::Destroyed();
-	if (PickupSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
-	}
+	
+	PlayDestroySound();
 	SpawnDestroyEffect();
 }
 
@@ -74,6 +74,33 @@ void APickup::SpawnDestroyEffect()
 	if (PickupEffect)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, PickupEffect, GetActorLocation(), GetActorRotation());	
+	}
+}
+
+void APickup::SpawnDestroyEffectAttached(ABlasterCharacter* AttachCharacter)
+{
+	if (PickupEffect)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAttached(
+			PickupEffect,
+			AttachCharacter->GetMesh(),
+			FName("pelvis"),
+			FVector(),
+			AttachCharacter->GetActorUpVector().Rotation() * -1,
+			EAttachLocation::Type::KeepRelativeOffset,
+			true,
+			true,
+			ENCPoolMethod::None,
+			true
+		);	
+	}
+}
+
+void APickup::PlayDestroySound()
+{
+	if (PickupSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
 	}
 }
 
