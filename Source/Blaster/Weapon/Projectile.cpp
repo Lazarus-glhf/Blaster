@@ -58,6 +58,7 @@ void AProjectile::BeginPlay()
 		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 	}
 
+	/*
 	FPredictProjectilePathParams PathParams;
 	PathParams.bTraceWithChannel = true;
 	PathParams.bTraceWithCollision = true;
@@ -74,7 +75,8 @@ void AProjectile::BeginPlay()
 	
 	FPredictProjectilePathResult PathResult;
 
-	UGameplayStatics::PredictProjectilePath(this, PathParams, PathResult);	
+	UGameplayStatics::PredictProjectilePath(this, PathParams, PathResult);
+	*/
 }
 
 void AProjectile::Destroyed()

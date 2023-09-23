@@ -34,10 +34,10 @@ void AProjectileWeapon::Fire(const FVector& HitTarget)
 					SpawnedProjectile->bUSeServerSideRewind = false;
 					SpawnedProjectile->SetDamage(Damage);
 				}
-				else // 非服务器控制的，生成非复制的非 SSR Actor
+				else // 非服务器控制的，生成非复制的 SSR Actor
 				{
 					SpawnedProjectile = World->SpawnActor<AProjectile>(ServerSideRewindProjectileClass, SocketTransform.GetLocation(), TargetRotation, SpawnParameters);
-					SpawnedProjectile->bUSeServerSideRewind = false;
+					SpawnedProjectile->bUSeServerSideRewind = true;
 				}
 			}
 			else // Client, using SSR
