@@ -68,6 +68,7 @@ void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AWeapon, WeaponState);
+	DOREPLIFETIME_CONDITION(AWeapon, bUseServerSideRewind, COND_OwnerOnly);
 }
 
 void AWeapon::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult)
@@ -110,6 +111,11 @@ void AWeapon::OnWeaponStateSet()
 	}
 }
 
+void AWeapon::OnPingTooHigh(bool bPingTooHigh)
+{
+	bUseServerSideRewind = !bPingTooHigh;
+}
+
 void AWeapon::OnRep_WeaponState()
 {
 	OnWeaponStateSet();
@@ -123,6 +129,16 @@ void AWeapon::OnEquipped()
 	WeaponMesh->SetEnableGravity(false);
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	EnableCustomDepth(false);
+	
+	OwnerCharacter = OwnerCharacter == nullptr ? Cast<ABlasterCharacter>(GetOwner()) : OwnerCharacter;
+	if (OwnerCharacter && bUseServerSideRewind)
+	{
+		OwnerController = OwnerController == nullptr ? Cast<ABlasterPlayerController>(OwnerCharacter->Controller) : OwnerController;
+		if (OwnerController && HasAuthority() && !OwnerController->HighPingDelegate.IsBound())
+		{
+			OwnerController->HighPingDelegate.AddDynamic(this, &AWeapon::OnPingTooHigh);
+		}
+	}
 }
 
 void AWeapon::OnDropped()
@@ -138,6 +154,16 @@ void AWeapon::OnDropped()
 	GetWeaponMesh()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	GetWeaponMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	EnableCustomDepth(true);
+
+	OwnerCharacter = OwnerCharacter == nullptr ? Cast<ABlasterCharacter>(GetOwner()) : OwnerCharacter;
+	if (OwnerCharacter && bUseServerSideRewind)
+	{
+		OwnerController = OwnerController == nullptr ? Cast<ABlasterPlayerController>(OwnerCharacter->Controller) : OwnerController;
+		if (OwnerController && HasAuthority() && OwnerController->HighPingDelegate.IsBound())
+		{
+			OwnerController->HighPingDelegate.RemoveDynamic(this, &AWeapon::OnPingTooHigh);
+		}
+	}
 }
 
 void AWeapon::OnEquippedSecondary()
@@ -150,6 +176,16 @@ void AWeapon::OnEquippedSecondary()
 	WeaponMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_TAN);
 	WeaponMesh->MarkRenderStateDirty();
 	WeaponMesh->SetRenderCustomDepth(true);
+
+	OwnerCharacter = OwnerCharacter == nullptr ? Cast<ABlasterCharacter>(GetOwner()) : OwnerCharacter;
+	if (OwnerCharacter && bUseServerSideRewind)
+	{
+		OwnerController = OwnerController == nullptr ? Cast<ABlasterPlayerController>(OwnerCharacter->Controller) : OwnerController;
+		if (OwnerController && HasAuthority() && OwnerController->HighPingDelegate.IsBound())
+		{
+			OwnerController->HighPingDelegate.RemoveDynamic(this, &AWeapon::OnPingTooHigh);
+		}
+	}
 }
 
 void AWeapon::SpendRound()
