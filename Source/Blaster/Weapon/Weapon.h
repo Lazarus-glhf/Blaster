@@ -39,6 +39,8 @@ public:
 	virtual void OnRep_Owner() override;
 	void SetHUDWeaponAmmo();
 	void ShowPickupWidget(bool bShowWidget);
+
+	// 由
 	virtual void Fire(const FVector& HitTarget);
 	void Dropped();
 	void ReloadAmmo(int32 AmmoToReload);
@@ -125,9 +127,9 @@ protected:
 	bool bUseServerSideRewind = false;
 	
 	UPROPERTY()
-	class ABlasterCharacter* BlasterOwnerCharacter;
+	class ABlasterCharacter* OwnerCharacter;
 	UPROPERTY()
-	class ABlasterPlayerController* BlasterOwnerPlayerController;
+	class ABlasterPlayerController* OwnerController;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")

@@ -18,10 +18,10 @@ void AHitScanWeapon::Fire(const FVector& HitTarget)
 
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	if (OwnerPawn == nullptr) return;
-	AController* InstigaterController = OwnerPawn->GetController();
+	AController* InstigatorController = OwnerPawn->GetController();
 
 	const USkeletalMeshSocket* MuzzleFlashSocket = GetWeaponMesh()->GetSocketByName("MuzzleFlash");
-	if (MuzzleFlashSocket && InstigaterController)
+	if (MuzzleFlashSocket && InstigatorController)
 	{
 		const FTransform SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetWeaponMesh());
 		const FVector Start = SocketTransform.GetLocation();
@@ -29,30 +29,32 @@ void AHitScanWeapon::Fire(const FVector& HitTarget)
 		FHitResult FireHit;
 		WeaponTraceHit(Start, HitTarget, FireHit);
 
+		// Apply damage 仅服务器执行
 		ABlasterCharacter* HitCharacter = Cast<ABlasterCharacter>(FireHit.GetActor());
-		if (HitCharacter && InstigaterController)
+		if (HitCharacter && InstigatorController)
 		{
 			if (HasAuthority() && !bUseServerSideRewind)
 			{
 				UGameplayStatics::ApplyDamage(
 					HitCharacter,
 					Damage,
-					InstigaterController,
+					InstigatorController,
 					this,
 					UDamageType::StaticClass()
 				);	
 			}
+			// 若非服务器则请求服务器上的 LagCompensation 执行 ApplyDamage
 			if (!HasAuthority() && bUseServerSideRewind)
 			{
-				BlasterOwnerCharacter = BlasterOwnerCharacter == nullptr ? Cast<ABlasterCharacter>(OwnerPawn) : BlasterOwnerCharacter;
-				BlasterOwnerPlayerController = BlasterOwnerPlayerController == nullptr ? Cast<ABlasterPlayerController>(InstigaterController) : BlasterOwnerPlayerController;
-				if (BlasterOwnerPlayerController && BlasterOwnerCharacter && HitCharacter->GetLagCompensationComponent())
+				OwnerCharacter = OwnerCharacter == nullptr ? Cast<ABlasterCharacter>(OwnerPawn) : OwnerCharacter;
+				OwnerController = OwnerController == nullptr ? Cast<ABlasterPlayerController>(InstigatorController) : OwnerController;
+				if (OwnerController && OwnerCharacter && HitCharacter->GetLagCompensationComponent() && OwnerCharacter->IsLocallyControlled())
 				{
-					BlasterOwnerCharacter->GetLagCompensationComponent()->ServerScoreRequest(
+					OwnerCharacter->GetLagCompensationComponent()->ServerScoreRequest(
 						HitCharacter,
 						Start,
 						HitTarget,
-						BlasterOwnerPlayerController->GetServerTime() - BlasterOwnerPlayerController->SingleTripTime,
+						OwnerController->GetServerTime() - OwnerController->SingleTripTime,
 						this
 					);
 				}

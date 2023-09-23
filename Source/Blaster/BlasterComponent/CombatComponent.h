@@ -66,6 +66,8 @@ protected:
 	void FireProjectileWeapon();
 	void FireHitScanWeapon();
 	void FireShotgun();
+
+	// Called by Server Fires
 	void LocalFire(const FVector_NetQuantize& TraceHitTarget);
 	void LocalShotgunFire(const TArray<FVector_NetQuantize>& TraceHitTargets);
 

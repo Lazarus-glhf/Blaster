@@ -1,16 +1,19 @@
 ﻿#include "Shotgun.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Blaster/Character/BlasterCharacter.h"
+#include "Blaster/BlasterComponent/LagCompensationComponent.h"
+#include "Blaster/PlayerController/BlasterPlayerController.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Sound/SoundCue.h"
 
+
 void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 {
 	AWeapon::Fire(FVector());
 	
-	const APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	if (OwnerPawn == nullptr) return;
 	AController* InstigatorController = OwnerPawn->GetController();
 
@@ -18,7 +21,7 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 	if (MuzzleFlashSocket && InstigatorController)
 	{
 		const FTransform SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetWeaponMesh());
-		const FVector Start = SocketTransform.GetLocation();
+		const FVector TraceStart = SocketTransform.GetLocation();
 
 		// Maps hit character to number of times hit
 		TMap<ABlasterCharacter*, uint32> HitMap;
@@ -26,10 +29,9 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 		for (FVector_NetQuantize HitTarget : HitTargets)
 		{
 			FHitResult FireHitResult;
-			WeaponTraceHit(Start, HitTarget, FireHitResult);
-
-			ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(FireHitResult.GetActor());
-			if (BlasterCharacter && HasAuthority())
+			WeaponTraceHit(TraceStart, HitTarget, FireHitResult);
+			
+			if (ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(FireHitResult.GetActor()); BlasterCharacter)
 			{
 				if (HitMap.Contains(BlasterCharacter))
 				{
@@ -50,16 +52,29 @@ void AShotgun::FireShotgun(const TArray<FVector_NetQuantize>& HitTargets)
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, FireHitResult.ImpactPoint, .5f, FMath::FRandRange(-.5f, .5f));
 			}
 		}
-		
+
+		TArray<ABlasterCharacter*> HitCharacters;
 		for (auto HitPair : HitMap)
 		{
-			if (HitPair.Key && HasAuthority() && InstigatorController)
+			if (HitPair.Key && InstigatorController)
 			{
-				UGameplayStatics::ApplyDamage(HitPair.Key, Damage * HitPair.Value, InstigatorController, this, UDamageType::StaticClass());
+				if (HasAuthority() && !bUseServerSideRewind)
+				{
+					UGameplayStatics::ApplyDamage(HitPair.Key, Damage * HitPair.Value, InstigatorController, this, UDamageType::StaticClass());	
+				}
+				HitCharacters.Add(HitPair.Key);
+			}
+		}
+		if (!HasAuthority() && bUseServerSideRewind)
+		{
+			OwnerCharacter = OwnerCharacter == nullptr ? Cast<ABlasterCharacter>(OwnerPawn) : OwnerCharacter;
+			OwnerController = OwnerController == nullptr ? Cast<ABlasterPlayerController>(OwnerPawn->GetController()) : OwnerController;
+			if (OwnerCharacter && OwnerController && OwnerCharacter->GetLagCompensationComponent() && OwnerCharacter->IsLocallyControlled())
+			{
+				OwnerCharacter->GetLagCompensationComponent()->ShotgunServerScoreRequest(HitCharacters, TraceStart, HitTargets, OwnerController->GetServerTime() - OwnerController->SingleTripTime, this);
 			}
 		}
 	}
-	
 }
 
 void AShotgun::ShotgunTraceEndWithScatter(const FVector& HitTarget, TArray<FVector_NetQuantize>& HitTargets)

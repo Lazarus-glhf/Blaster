@@ -289,7 +289,7 @@ void ABlasterCharacter::PostInitializeComponents()
 	}
 	if (LagCompensation)
 	{
-		LagCompensation->Character = this;
+		LagCompensation->ComponentOwnerCharacter = this;
 		if (Controller)
 		{
 			LagCompensation->Controller = Cast<ABlasterPlayerController>(Controller);

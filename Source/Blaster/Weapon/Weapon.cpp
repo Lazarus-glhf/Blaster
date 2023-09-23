@@ -188,10 +188,10 @@ void AWeapon::ClientReloadAmmo_Implementation(int32 AmmoToReload)
 	
 	Ammo = FMath::Clamp(Ammo + AmmoToReload, 0, MagCapacity);
 	
-	BlasterOwnerCharacter = BlasterOwnerCharacter == nullptr ? Cast<ABlasterCharacter>(GetOwner()) : BlasterOwnerCharacter;
-	if (BlasterOwnerCharacter && BlasterOwnerCharacter->GetCombat() && IsFull())
+	OwnerCharacter = OwnerCharacter == nullptr ? Cast<ABlasterCharacter>(GetOwner()) : OwnerCharacter;
+	if (OwnerCharacter && OwnerCharacter->GetCombat() && IsFull())
 	{
-		BlasterOwnerCharacter->GetCombat()->JumpToShotgunEnd();
+		OwnerCharacter->GetCombat()->JumpToShotgunEnd();
 	}
 	SetHUDWeaponAmmo();
 }
@@ -201,8 +201,8 @@ void AWeapon::OnRep_Owner()
 	Super::OnRep_Owner();
 	if (Owner == nullptr)
 	{
-		BlasterOwnerCharacter = nullptr;
-		BlasterOwnerPlayerController = nullptr;
+		OwnerCharacter = nullptr;
+		OwnerController = nullptr;
 	}
 	else
 	{
@@ -212,13 +212,13 @@ void AWeapon::OnRep_Owner()
 
 void AWeapon::SetHUDWeaponAmmo()
 {
-	BlasterOwnerCharacter = BlasterOwnerCharacter == nullptr ? Cast<ABlasterCharacter>(GetOwner()) : BlasterOwnerCharacter;
-	if (BlasterOwnerCharacter)
+	OwnerCharacter = OwnerCharacter == nullptr ? Cast<ABlasterCharacter>(GetOwner()) : OwnerCharacter;
+	if (OwnerCharacter)
 	{
-		BlasterOwnerPlayerController = BlasterOwnerPlayerController == nullptr ? Cast<ABlasterPlayerController>(BlasterOwnerCharacter->Controller) : BlasterOwnerPlayerController;
-		if (BlasterOwnerPlayerController)
+		OwnerController = OwnerController == nullptr ? Cast<ABlasterPlayerController>(OwnerCharacter->Controller) : OwnerController;
+		if (OwnerController)
 		{
-			BlasterOwnerPlayerController->SetHUDWeaponAmmo(Ammo);
+			OwnerController->SetHUDWeaponAmmo(Ammo);
 		}
 	}
 }
@@ -267,8 +267,8 @@ void AWeapon::Dropped()
 	const FDetachmentTransformRules DetachRules(EDetachmentRule::KeepWorld, true);
 	WeaponMesh->DetachFromComponent(DetachRules);
 	SetOwner(nullptr);
-	BlasterOwnerCharacter = nullptr;
-	BlasterOwnerPlayerController = nullptr;
+	OwnerCharacter = nullptr;
+	OwnerController = nullptr;
 }
 
 bool AWeapon::IsEmpty() const
