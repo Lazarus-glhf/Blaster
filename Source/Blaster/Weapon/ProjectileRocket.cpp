@@ -47,6 +47,30 @@ void AProjectileRocket::BeginPlay()
 	}
 }
 
+#if WITH_EDITOR
+void AProjectileRocket::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	AProjectile::PostEditChangeProperty(PropertyChangedEvent);
+
+	FName PropertyName = PropertyChangedEvent.Property != nullptr ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(AProjectile, ProjectileSpeed))
+	{
+		if (RocketMovementComponent)
+		{
+			RocketMovementComponent->InitialSpeed = ProjectileSpeed;
+			RocketMovementComponent->MaxSpeed = ProjectileSpeed;
+		}
+	}
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(AProjectile, ProjectileGravity))
+	{
+		if (RocketMovementComponent)
+		{
+			RocketMovementComponent->ProjectileGravityScale = ProjectileGravity / -980.f;
+		}
+	}
+}
+#endif
+
 void AProjectileRocket::OnHit(UPrimitiveComponent* HitCom, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// 忽略使用者

@@ -1,12 +1,12 @@
 #include "Projectile.h"
 
-#include "NiagaraComponent.h"
 #include "Components/BoxComponent.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 #include "Blaster/Blaster.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 AProjectile::AProjectile()
 {	
@@ -22,6 +22,30 @@ AProjectile::AProjectile()
 	CollisionBox->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECollisionResponse::ECR_Block);
 }
 
+#if WITH_EDITOR
+void AProjectile::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	
+	FName PropertyName = PropertyChangedEvent.Property != nullptr ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(AProjectile, ProjectileSpeed))
+	{
+		if (ProjectileMovementComponent)
+		{
+			ProjectileMovementComponent->InitialSpeed = ProjectileSpeed;
+			ProjectileMovementComponent->MaxSpeed = ProjectileSpeed;
+		}
+	}
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(AProjectile, ProjectileGravity))
+	{
+		if (ProjectileMovementComponent)
+		{
+			ProjectileMovementComponent->ProjectileGravityScale = ProjectileGravity / -980.f;
+		}
+	}
+}
+#endif
+
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -33,6 +57,24 @@ void AProjectile::BeginPlay()
 	{
 		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 	}
+
+	FPredictProjectilePathParams PathParams;
+	PathParams.bTraceWithChannel = true;
+	PathParams.bTraceWithCollision = true;
+	PathParams.DrawDebugTime = 5.f;
+	PathParams.DrawDebugType = EDrawDebugTrace::ForDuration;
+	PathParams.LaunchVelocity = GetActorForwardVector() * ProjectileSpeed;
+	PathParams.MaxSimTime = 4.f;
+	PathParams.OverrideGravityZ = ProjectileGravity;
+	PathParams.ProjectileRadius = 5.f;
+	PathParams.SimFrequency = 30.f;
+	PathParams.StartLocation = GetActorLocation();
+	PathParams.TraceChannel = ECollisionChannel::ECC_Visibility;
+	PathParams.ActorsToIgnore.Add(this);
+	
+	FPredictProjectilePathResult PathResult;
+
+	UGameplayStatics::PredictProjectilePath(this, PathParams, PathResult);	
 }
 
 void AProjectile::Destroyed()

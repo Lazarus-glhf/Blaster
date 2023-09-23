@@ -14,6 +14,23 @@ class BLASTER_API AProjectile : public AActor
 public:	
 	AProjectile();
 	virtual void Destroyed() override;
+
+	/**
+	 *	Used with server-side rewind
+	 */
+	bool bUSeServerSideRewind = false;
+	FVector_NetQuantize TraceStart;
+	FVector_NetQuantize100 InitialVelocity;
+
+	UPROPERTY(EditAnywhere)
+	float ProjectileSpeed = 1500.f;
+
+	UPROPERTY(EditAnywhere)
+	float ProjectileGravity = -980.f;
+
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override; 
+#endif
 	
 protected:
 	virtual void BeginPlay() override;

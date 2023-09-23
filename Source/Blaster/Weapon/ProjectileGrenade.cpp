@@ -39,3 +39,8 @@ void AProjectileGrenade::Destroyed()
 	ApplyExplodeDamage();
 	Super::Destroyed();
 }
+
+void AProjectileGrenade::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+}
