@@ -14,7 +14,7 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 		
 		if (UWorld* World = GetWorld(); World)
 		{
-			bUseSeamlessTravel = true;
+			bUseSeamlessTravel = false;
 			World->ServerTravel(TravelMapPath);
 		}
 	}
