@@ -6,6 +6,7 @@
 #include "Components/Button.h"
 #include "GameFramework/PlayerController.h"
 #include "MultiplayerSessionsSubsystem.h"
+#include "Blaster/Character/BlasterCharacter.h"
 #include "GameFramework/GameModeBase.h"
 
 bool UReturnToMainMenu::Initialize()
@@ -72,16 +73,6 @@ void UReturnToMainMenu::MenuTearDown()
 	}
 }
 
-void UReturnToMainMenu::ReturnButtonClicked()
-{
-	ReturnButton->SetIsEnabled(false);
-	
-	if (MultiplayerSessionsSubsystem)
-	{
-		MultiplayerSessionsSubsystem->DestroySession();
-	}
-}
-
 void UReturnToMainMenu::OnDestroySession(bool bWasSuccessful)
 {
 	if (!bWasSuccessful)
@@ -106,5 +97,37 @@ void UReturnToMainMenu::OnDestroySession(bool bWasSuccessful)
 				PlayerController->ClientReturnToMainMenuWithTextReason(FText());
 			}
 		}
+	}
+}
+
+void UReturnToMainMenu::ReturnButtonClicked()
+{
+	ReturnButton->SetIsEnabled(false);
+
+	if (UWorld* World = GetWorld(); World)
+	{
+		APlayerController* FirstPlayerController = World->GetFirstPlayerController();
+		if (FirstPlayerController)
+		{
+			ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(FirstPlayerController->GetPawn());
+			if (BlasterCharacter)
+			{
+				BlasterCharacter->ServerLeaveGame();
+				BlasterCharacter->OnLeftGame.AddDynamic(this, &UReturnToMainMenu::OnPlayerLeftGame);
+			}
+			else
+			{
+				ReturnButton->SetIsEnabled(true);
+			}
+		}
+	}
+
+}
+
+void UReturnToMainMenu::OnPlayerLeftGame()
+{
+	if (MultiplayerSessionsSubsystem)
+	{
+		MultiplayerSessionsSubsystem->DestroySession();
 	}
 }
