@@ -16,7 +16,10 @@ void AWeaponSpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnWeapon();
+	if (HasAuthority())
+	{
+		SpawnWeapon();	
+	}
 }
 
 void AWeaponSpawnPoint::Tick(float DeltaTime)
