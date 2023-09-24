@@ -12,6 +12,7 @@ void APickupSpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
 	SpawnPickup();
 }
 
@@ -22,6 +23,8 @@ void APickupSpawnPoint::Tick(float DeltaTime)
 
 void APickupSpawnPoint::SpawnPickup()
 {
+	if (!HasAuthority()) return;
+	
 	if (const int32 NumPickupClasses = PickupClasses.Num(); NumPickupClasses > 0)
 	{
 		const int32 Selection = FMath::RandRange(0, NumPickupClasses - 1);
