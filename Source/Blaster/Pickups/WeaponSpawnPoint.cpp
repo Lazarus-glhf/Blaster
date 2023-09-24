@@ -10,6 +10,8 @@ AWeaponSpawnPoint::AWeaponSpawnPoint()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+
+	Pad = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pad"));
 }
 
 void AWeaponSpawnPoint::BeginPlay()

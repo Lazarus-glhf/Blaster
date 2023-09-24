@@ -50,4 +50,5 @@ private:
 	void BindOverlapTimerFinished();
 
 public:
+	FORCEINLINE UStaticMeshComponent* GetMesh() const { return PickupMesh; }
 };

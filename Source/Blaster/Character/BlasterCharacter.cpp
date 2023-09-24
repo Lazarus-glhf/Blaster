@@ -28,6 +28,7 @@
 #include "Components/BoxComponent.h"
 #include "Blaster/BlasterComponent/LagCompensationComponent.h"
 #include "Blaster/GameState/BlasterGameState.h"
+#include "Blaster/Pickups/AmmoPickup.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -600,6 +601,18 @@ void ABlasterCharacter::ServerEliminated(bool bPlayerLeftGame)
 			DropOrDestroyWeapon(Combat->SecondaryWeapon);
 		}
 	}
+
+	for (auto Pickup : ElimSpawnPickups)
+	{
+		AAmmoPickup* SpawnedAmmo = GetWorld()->SpawnActor<AAmmoPickup>(Pickup, GetActorLocation() + FVector(FMath::RandPointInCircle(100.f), 0.f), GetActorRotation());
+		if (SpawnedAmmo && SpawnedAmmo->GetMesh())
+		{
+			SpawnedAmmo->SetDestroyTimer(AmmoDisappearTime);
+			FRotator RandomRotator = FRotator(0.f, FMath::FRandRange(-45.f, 45.f), FMath::FRandRange(-45.f, 45.f));
+			SpawnedAmmo->GetMesh()->AddImpulse(AmmoSpawnForce * GetActorUpVector());
+		}
+	}
+	
 	MulticastEliminated(bPlayerLeftGame);
 }
 

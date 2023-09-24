@@ -29,6 +29,9 @@ protected:
 	void StartSpawnPickupTimer(AActor* DestroyedActor);
 
 private:
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* Pad;
+	
 	FTimerHandle SpawnWeaponTimer;
 
 	UPROPERTY(EditAnywhere)

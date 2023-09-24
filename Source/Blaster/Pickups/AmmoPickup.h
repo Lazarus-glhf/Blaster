@@ -14,6 +14,8 @@ public:
 	AAmmoPickup();
 	virtual void Tick(float DeltaTime) override;
 
+	void SetDestroyTimer(float DestroyTime);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult) override;
@@ -24,6 +26,11 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	EWeaponType WeaponType;
+
+	FTimerHandle DestroyTimer;
+
+	UFUNCTION()
+	void OnDestroyTimerFinished();
 	
 public:
 };

@@ -15,22 +15,25 @@ APickup::APickup()
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	// RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+
+	PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pickup Mesh"));
+	SetRootComponent(PickupMesh);
+	PickupMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	PickupMesh->SetCollisionResponseToAllChannels(ECR_Block);
+	PickupMesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	PickupMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	PickupMesh->SetSimulatePhysics(true);
+	PickupMesh->SetUseCCD(true);
+	PickupMesh->SetRenderCustomDepth(true);
+	PickupMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_PURPLE);
 	
 	OverlapSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Overlap Sphere"));
 	OverlapSphere->SetupAttachment(RootComponent);
-	OverlapSphere->SetSphereRadius(150.f);
+	OverlapSphere->SetSphereRadius(50.f);
 	OverlapSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	OverlapSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	OverlapSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-	OverlapSphere->AddLocalOffset(FVector(0.f, 0.f, 85.f));
-
-	PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pickup Mesh"));
-	PickupMesh->SetupAttachment(OverlapSphere);
-	PickupMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	PickupMesh->SetRelativeScale3D(FVector(3.f));
-	PickupMesh->SetRenderCustomDepth(true);
-	PickupMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_PURPLE);
 
 	PickupEffectComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("PickupEffectComponent"));
 	PickupEffectComponent->SetupAttachment(RootComponent);
@@ -57,11 +60,7 @@ void APickup::Destroyed()
 void APickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (PickupMesh)
-	{
-		PickupMesh->AddLocalRotation(FRotator(0.f, PickupTurnRate * DeltaTime, 0.f));
-	}
+	
 }
 
 void APickup::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool FromSweep, const FHitResult& SweepResult)

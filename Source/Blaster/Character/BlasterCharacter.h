@@ -37,7 +37,7 @@ public:
 
 	virtual void OnRep_ReplicatedMovement() override;
 
-	// Only called on server
+	// 由 GameMode 调用，即仅会在服务器上调用
 	void ServerEliminated(bool bPlayerLeftGame);
 	
 	UFUNCTION(NetMulticast, Reliable)
@@ -326,12 +326,16 @@ private:
 	 */
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* EliminatedBotEffect;
-
 	UPROPERTY(VisibleAnywhere)
 	UParticleSystemComponent* EliminatedBotComponent;
-
 	UPROPERTY(EditAnywhere)
 	class USoundCue* EliminatedSound;
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<class AAmmoPickup>> ElimSpawnPickups;
+	UPROPERTY(EditAnywhere)
+	float AmmoSpawnForce = 50.f;
+	UPROPERTY(EditAnywhere)
+	float AmmoDisappearTime = 20.f;
 
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* CrownSystem;

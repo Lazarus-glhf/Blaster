@@ -27,8 +27,19 @@ void AAmmoPickup::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AActor*
 	Destroy();
 }
 
+void AAmmoPickup::OnDestroyTimerFinished()
+{
+	AActor::Destroy();
+}
+
 void AAmmoPickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+void AAmmoPickup::SetDestroyTimer(float DestroyTime)
+{
+	GetWorldTimerManager().SetTimer(DestroyTimer, this, &AAmmoPickup::OnDestroyTimerFinished, DestroyTime);
+}
+
 
