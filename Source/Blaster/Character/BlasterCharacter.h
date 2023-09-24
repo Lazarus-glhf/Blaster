@@ -204,7 +204,7 @@ private:
 	class UBuffComponent* Buff;
 
 	UPROPERTY(VisibleAnywhere)
-	class ULagCompensationComponent* LagCompensation;
+	class ULagCompensationComponent* LagCompensationComponent;
 
 	float AO_Yaw;
 	float InterpAO_Yaw;
@@ -351,6 +351,6 @@ public:
 	FORCEINLINE UAnimMontage* GetReloadMontage() const { return ReloadMontage; }
 	FORCEINLINE UStaticMeshComponent* GetAttachedGrenade() const { return AttachedGrenade; }
 	FORCEINLINE UBuffComponent* GetBuffComponent() const { return Buff; }
-	FORCEINLINE ULagCompensationComponent* GetLagCompensationComponent() const { return LagCompensation; }
+	FORCEINLINE ULagCompensationComponent* GetLagCompensationComponent() const { return LagCompensationComponent; }
 	bool IsLocallyReloading();
 };

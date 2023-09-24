@@ -52,7 +52,7 @@ ABlasterCharacter::ABlasterCharacter()
 	Buff = CreateDefaultSubobject<UBuffComponent>(TEXT("BuffComponent"));
 	Buff->SetIsReplicated(true);
 
-	LagCompensation = CreateDefaultSubobject<ULagCompensationComponent>(TEXT("LagCompensation"));
+	LagCompensationComponent = CreateDefaultSubobject<ULagCompensationComponent>(TEXT("LagCompensation"));
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, 850.f);
@@ -280,12 +280,12 @@ void ABlasterCharacter::PostInitializeComponents()
 		Buff->Character = this;
 		Buff->SetInitialSpeeds(GetCharacterMovement()->MaxWalkSpeed, GetCharacterMovement()->MaxWalkSpeedCrouched);
 	}
-	if (LagCompensation)
+	if (LagCompensationComponent)
 	{
-		LagCompensation->ComponentOwnerCharacter = this;
+		LagCompensationComponent->ComponentOwnerCharacter = this;
 		if (Controller)
 		{
-			LagCompensation->Controller = Cast<ABlasterPlayerController>(Controller);
+			LagCompensationComponent->Controller = Cast<ABlasterPlayerController>(Controller);
 		}
 	}
 }
