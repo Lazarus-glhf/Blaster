@@ -514,7 +514,7 @@ void ABlasterPlayerController::HandleCooldown()
 		if (bHUDValid)
 		{
 			BlasterHUD->Announcement->SetVisibility(ESlateVisibility::Visible);
-			const FString AnnouncementText("New Match Starts in:");
+			const FString AnnouncementText("下一场比赛即将开始：");
 			BlasterHUD->Announcement->AnnouncementText->SetText(FText::FromString(AnnouncementText));
 
 			ABlasterGameState* BlasterGameState = Cast<ABlasterGameState>(UGameplayStatics::GetGameState(this));
@@ -525,19 +525,19 @@ void ABlasterPlayerController::HandleCooldown()
 				FString InfoTextString;
 				if (TopPlayers.Num() == 0)
 				{
-					InfoTextString = FString("There is no winner");
+					InfoTextString = FString("看起来是相当和平的一局");
 				}
 				else if (TopPlayers.Num() == 1 && TopPlayers[0] == BlasterPlayerState)
 				{
-					InfoTextString = FString("You are the winner");
+					InfoTextString = FString("你就是新的捍胃者！");
 				}
 				else if (TopPlayers.Num() == 1 && TopPlayers[0] != BlasterPlayerState)
 				{
-					InfoTextString = FString::Printf(TEXT("Winner: \n%s"), *TopPlayers[0]->GetPlayerName());
+					InfoTextString = FString::Printf(TEXT("胜者是： \n%s"), *TopPlayers[0]->GetPlayerName());
 				}
 				else if (TopPlayers.Num() > 1)
 				{
-					InfoTextString = FString("Player tied for the win:\n");
+					InfoTextString = FString("看起来这几位旗鼓相当啊，可惜没有胜者：\n");
 					for (auto TiedPlayer : TopPlayers)
 					{
 						InfoTextString.Append(FString::Printf(TEXT("%s\n"), *TiedPlayer->GetPlayerName()));
