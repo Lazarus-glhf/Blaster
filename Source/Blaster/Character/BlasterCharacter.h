@@ -64,6 +64,12 @@ public:
 	void ServerLeaveGame();
 	
 	FOnLeftGame OnLeftGame;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiCastGainedTheLead();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MultiCastLostTheLead();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -326,6 +332,12 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class USoundCue* EliminatedSound;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraSystem* CrownSystem;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* CrownComponent;
 
 	UPROPERTY()
 	class ABlasterPlayerState* BlasterPlayerState;

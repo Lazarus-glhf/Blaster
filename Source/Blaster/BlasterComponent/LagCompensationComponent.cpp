@@ -125,8 +125,6 @@ FServerSideRewindResult ULagCompensationComponent::ProjectileConfirmHit(const FF
 	PathParams.ProjectileRadius = 5.f;
 	PathParams.TraceChannel = ECC_HitBox;
 	PathParams.ActorsToIgnore.Add(GetOwner());
-	PathParams.DrawDebugTime = 5.f;
-	PathParams.DrawDebugType = EDrawDebugTrace::ForDuration;
 	
 	FPredictProjectilePathResult PathResult;
 	UGameplayStatics::PredictProjectilePath(this, PathParams, PathResult);
@@ -434,8 +432,16 @@ void ULagCompensationComponent::ShotgunServerScoreRequest_Implementation(const T
 
 	for (const auto& HitCharacter : HitCharacters)
 	{
-		const float HeadShotDamage = ConfirmResult.HeadShots[HitCharacter] * DamageCauser->GetDamage();
-		const float BodyShotDamage = ConfirmResult.BodyShots[HitCharacter] * DamageCauser->GetDamage();
+		float HeadShotDamage = 0.f;
+		float BodyShotDamage = 0.f;
+		if (ConfirmResult.HeadShots.Contains(HitCharacter))
+		{
+			HeadShotDamage= ConfirmResult.HeadShots[HitCharacter] * DamageCauser->GetDamage();
+		}
+		if (ConfirmResult.BodyShots.Contains(HitCharacter))
+		{
+			BodyShotDamage = ConfirmResult.BodyShots[HitCharacter] * DamageCauser->GetDamage();
+		}
 		const float TotalDamage = HeadShotDamage + BodyShotDamage;
 
 		UGameplayStatics::ApplyDamage(HitCharacter, TotalDamage, ComponentOwnerCharacter->Controller, DamageCauser, UDamageType::StaticClass());
