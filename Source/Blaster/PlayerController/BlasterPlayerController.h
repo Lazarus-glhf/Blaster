@@ -38,6 +38,8 @@ public:
 	float SingleTripTime = 0.f;
 
 	FHighPingDelegate HighPingDelegate;
+
+	void BroadCastElim(APlayerState* Attacker, APlayerState* Victim);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -90,6 +92,9 @@ protected:
 	void HighPingWarning();
 	void StopHighPingWarning();
 	void CheckPing(float DeltaTime);
+
+	UFUNCTION(Client, Reliable)
+	void ClientElimAnnouncement(APlayerState* Attacker, APlayerState* Victim);
 	
 private:
 	UPROPERTY()

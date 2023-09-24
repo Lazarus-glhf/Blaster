@@ -2,14 +2,19 @@
 
 
 #include "BlasterHUD.h"
-
 #include "CharacterOverlay.h"
 #include "GameFramework/PlayerController.h"
 #include "Announcement.h"
+#include "ElimAnnouncement.h"
+#include "Blaster/PlayerController/BlasterPlayerController.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Components/HorizontalBox.h"
 
 void ABlasterHUD::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 void ABlasterHUD::AddCharacterOverlay()
@@ -35,6 +40,49 @@ void ABlasterHUD::AddAnnouncement()
 		{
 			Announcement->AddToViewport();	
 		}
+	}
+}
+
+void ABlasterHUD::AddElimAnnouncement(const FString& Attacker, const FString& Victim)
+{
+	OwningController = OwningController == nullptr ? Cast<ABlasterPlayerController>(GetOwningPlayerController()) : OwningController;
+	if (OwningController && ElimAnnouncementClass)
+	{
+		UElimAnnouncement* ElimAnnouncementWidget = CreateWidget<UElimAnnouncement>(OwningController, ElimAnnouncementClass);
+		if (ElimAnnouncementWidget)
+		{
+			ElimAnnouncementWidget->SetElimAnnouncementText(Attacker, Victim);
+			ElimAnnouncementWidget->AddToViewport();
+
+			for (UElimAnnouncement* Msg : ElimMessages)
+			{
+				if (Msg && Msg->AnnouncementBox)
+				{
+					UCanvasPanelSlot* CanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(Msg->AnnouncementBox);
+					if (CanvasSlot)
+					{
+						FVector2D Posotion = CanvasSlot->GetPosition();
+						FVector2D NewPosition(Posotion.X, Posotion.Y + CanvasSlot->GetSize().Y);
+						CanvasSlot->SetPosition(NewPosition);
+					}
+				}
+			}
+			
+			ElimMessages.Add(ElimAnnouncementWidget);
+
+			FTimerHandle ElimMsgTimer;
+			FTimerDelegate ElimMsgDelegate;
+			ElimMsgDelegate.BindUFunction(this, FName("ElimAnnouncementTimerFinished"), ElimAnnouncementWidget);
+			GetWorldTimerManager().SetTimer(ElimMsgTimer, ElimMsgDelegate, ElimAnnouncementLifeTime, false);
+		}
+	}
+}
+
+void ABlasterHUD::ElimAnnouncementTimerFinished(UElimAnnouncement* MsgToRemove)
+{
+	if (MsgToRemove)
+	{
+		MsgToRemove->RemoveFromParent();
 	}
 }
 
@@ -99,3 +147,5 @@ void ABlasterHUD::DrawCrosshair(UTexture2D* Texture, FVector2D ViewportCenter, F
 		CrosshairColor
 	);
 }
+
+

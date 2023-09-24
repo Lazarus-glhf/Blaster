@@ -554,3 +554,25 @@ void ABlasterPlayerController::HandleCooldown()
 		BlasterCharacter->GetCombat()->FireButtonPressed(false);
 	}
 }
+
+void ABlasterPlayerController::BroadCastElim(APlayerState* Attacker, APlayerState* Victim)
+{
+	ClientElimAnnouncement(Attacker, Victim);
+}
+
+void ABlasterPlayerController::ClientElimAnnouncement_Implementation(APlayerState* Attacker, APlayerState* Victim)
+{
+	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
+	if (Attacker && Victim && BlasterHUD)
+	{
+		if (Attacker != Victim)
+		{
+			BlasterHUD->AddElimAnnouncement(Attacker->GetPlayerName(), Victim->GetPlayerName());	
+		}
+		else
+		{
+			BlasterHUD->AddElimAnnouncement(Attacker->GetPlayerName(), FString(TEXT("自己")));	
+		}
+	}
+}
+
