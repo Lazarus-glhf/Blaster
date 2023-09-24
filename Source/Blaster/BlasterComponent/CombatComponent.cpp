@@ -533,6 +533,7 @@ void UCombatComponent::Reload()
 {
 	if (CarriedAmmo > 0 && !Character->GetEquippedWeapon()->IsFull() && CombatState == ECombatState::ECS_Unoccupied && !bLocallyReloading)
 	{
+		bCanFire = false;
 		ServerReload();
 		HandleReload();
 		bLocallyReloading = true;
@@ -562,6 +563,7 @@ void UCombatComponent::FinishReloading()
 {
 	if (Character == nullptr) return;
 	bLocallyReloading = false;
+	bCanFire = true;
 	if (Character->HasAuthority())
 	{
 		CombatState = ECombatState::ECS_Unoccupied;
