@@ -375,7 +375,7 @@ void ABlasterCharacter::Look(const FInputActionValue& Value)
 void ABlasterCharacter::EquipWeapon(const FInputActionValue& Value)
 {
 	if (bDisableGameplay) return;
-	if (CombatComponent)
+	if (IsNotAiming())
 	{
 		ServerEquipButtonPress();
 	}
@@ -441,7 +441,7 @@ void ABlasterCharacter::GrenadeButtonPressed(const FInputActionValue& Value)
 
 void ABlasterCharacter::SwapWeaponButtonPressed(const FInputActionValue& Value)
 {
-	if (CombatComponent)
+	if (IsNotAiming())
 	{
 		ServerSwapWeapon();
 		if (CombatComponent->ShouldSwapWeapons() && !HasAuthority() && CombatComponent->CombatState == ECombatState::ECS_Unoccupied)
@@ -971,6 +971,11 @@ bool ABlasterCharacter::IsWeaponEquipped() const
 bool ABlasterCharacter::IsAiming() const
 {
 	return (CombatComponent && CombatComponent->bAiming);
+}
+
+bool ABlasterCharacter::IsNotAiming() const
+{
+	return (CombatComponent && !CombatComponent->bAiming);
 }
 
 AWeapon* ABlasterCharacter::GetEquippedWeapon() const
