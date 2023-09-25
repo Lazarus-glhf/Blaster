@@ -211,7 +211,7 @@ private:
 	 * Blaster Components
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UCombatComponent* Combat;
+	class UCombatComponent* CombatComponent;
 
 	UPROPERTY(VisibleAnywhere)
 	class UBuffComponent* Buff;
@@ -357,6 +357,9 @@ private:
 	 */
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeapon> DefaultWeaponClass;
+
+	UFUNCTION(Client, Unreliable)
+	void ClientApplyingDamage(ABlasterPlayerController* AttackerController, float Damage);
 	
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
@@ -374,7 +377,7 @@ public:
 	FORCEINLINE void SetHealth(float Amount) { Health = Amount; }
 	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 	ECombatState GetCombatState() const;
-	FORCEINLINE UCombatComponent* GetCombat() const { return Combat; }
+	FORCEINLINE UCombatComponent* GetCombat() const { return CombatComponent; }
 	FORCEINLINE bool GetDisableGameplay() const { return bDisableGameplay; }
 	FORCEINLINE UAnimMontage* GetReloadMontage() const { return ReloadMontage; }
 	FORCEINLINE UStaticMeshComponent* GetAttachedGrenade() const { return AttachedGrenade; }

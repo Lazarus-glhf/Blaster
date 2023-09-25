@@ -555,6 +555,26 @@ void ABlasterPlayerController::HandleCooldown()
 	}
 }
 
+void ABlasterPlayerController::ApplyingDamage(float Damage)
+{
+	ClientApplyingDamage(Damage);
+}
+
+void ABlasterPlayerController::ClientApplyingDamage_Implementation(float Damage)
+{
+	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
+	if (BlasterHUD)
+	{
+		ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(GetPawn());
+		if (BlasterCharacter && BlasterCharacter->GetCombat())
+		{
+			BlasterCharacter->GetCombat()->PlayHitSound();
+		}
+		
+		BlasterHUD->ShowHitCrosshair();
+	}
+}
+
 void ABlasterPlayerController::BroadCastElim(APlayerState* Attacker, APlayerState* Victim)
 {
 	ClientElimAnnouncement(Attacker, Victim);

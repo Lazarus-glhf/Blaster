@@ -838,3 +838,11 @@ void UCombatComponent::InitializeCarriedAmmo()
 	CarriedAmmoMap.Emplace(EWeaponType::EWT_SniperRifle, StartingSniperAmmo);
 	CarriedAmmoMap.Emplace(EWeaponType::EWT_GrenadeLauncher, StartingGrenadeLauncherAmmo);
 }
+
+void UCombatComponent::PlayHitSound()
+{
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySound2D(this, HitSound);
+	}
+}

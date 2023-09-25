@@ -49,9 +49,20 @@ public:
 	UPROPERTY()
 	class UAnnouncement* Announcement;
 
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	TSubclassOf<UUserWidget> DamageWidgetClass;
+
+	UPROPERTY()
+	class UDamageAmountWidget* DamageWidget;
+
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	TSubclassOf<UUserWidget> HitCrosshairWidgetClass;
+
 	void AddCharacterOverlay();
 	void AddAnnouncement();
 	void AddElimAnnouncement(const FString& Attacker, const FString& Victim);
+	void AddDamageWidget(float Damage);
+	void ShowHitCrosshair();
 
 protected:
 	virtual void BeginPlay() override;
@@ -78,6 +89,12 @@ private:
 	void ElimAnnouncementTimerFinished(UElimAnnouncement* MsgToRemove);
 	UPROPERTY()
 	TArray<UElimAnnouncement*> ElimMessages;
+
+	UFUNCTION()
+	void DamageAmountTimerFinished(UDamageAmountWidget* WidgetToRemove);
+	
+	UFUNCTION()
+	void HitCrosshairTimerFinished(UHitCrosshair* CrosshairToRemove);
 
 public:
 	FORCEINLINE void SetHUDPackage(const FHUDPackage& Package) { HUDPackage = Package; }

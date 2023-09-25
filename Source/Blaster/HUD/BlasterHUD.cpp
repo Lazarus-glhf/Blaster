@@ -5,7 +5,9 @@
 #include "CharacterOverlay.h"
 #include "GameFramework/PlayerController.h"
 #include "Announcement.h"
+#include "DamageAmountWidget.h"
 #include "ElimAnnouncement.h"
+#include "HitCrosshair.h"
 #include "Blaster/PlayerController/BlasterPlayerController.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanelSlot.h"
@@ -78,11 +80,72 @@ void ABlasterHUD::AddElimAnnouncement(const FString& Attacker, const FString& Vi
 	}
 }
 
+void ABlasterHUD::AddDamageWidget(float Damage)
+{
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (PlayerController && DamageWidgetClass)
+	{
+		if (DamageWidget)
+		{
+			DamageWidget->SetDamageText(Damage);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Trying respawn DamageWidget"));
+			DamageWidget = CreateWidget<UDamageAmountWidget>(PlayerController, DamageWidgetClass);
+			if (DamageWidget)
+			{
+				DamageWidget->SetDamageText(Damage);
+				DamageWidget->AddToViewport();
+
+				FTimerHandle DamageAmountTimer;
+				FTimerDelegate DamageAmountDelegate;
+				DamageAmountDelegate.BindUFunction(this, FName("DamageAmountTimerFinished"), DamageWidget);
+				GetWorldTimerManager().SetTimer(DamageAmountTimer, DamageAmountDelegate, 1.f, false);
+			}
+		}
+	}
+}
+
+void ABlasterHUD::ShowHitCrosshair()
+{
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (HitCrosshairWidgetClass)
+	{
+		UHitCrosshair* HitCrosshair = CreateWidget<UHitCrosshair>(PlayerController, HitCrosshairWidgetClass);
+		if (HitCrosshair)
+		{
+			HitCrosshair->AddToViewport();
+
+			FTimerHandle HitCrosshairTimer;
+			FTimerDelegate HitCrosshairDelegate;
+			HitCrosshairDelegate.BindUFunction(this, FName("HitCrosshairTimerFinished"), HitCrosshair);
+			GetWorldTimerManager().SetTimer(HitCrosshairTimer, HitCrosshairDelegate, 0.1f, false);
+		}
+	}
+}
+
 void ABlasterHUD::ElimAnnouncementTimerFinished(UElimAnnouncement* MsgToRemove)
 {
 	if (MsgToRemove)
 	{
 		MsgToRemove->RemoveFromParent();
+	}
+}
+
+void ABlasterHUD::DamageAmountTimerFinished(UDamageAmountWidget* WidgetToRemove)
+{
+	if (WidgetToRemove)
+	{
+		WidgetToRemove->RemoveFromParent();
+	}
+}
+
+void ABlasterHUD::HitCrosshairTimerFinished(UHitCrosshair* CrosshairToRemove)
+{
+	if (CrosshairToRemove)
+	{
+		CrosshairToRemove->RemoveFromParent();
 	}
 }
 

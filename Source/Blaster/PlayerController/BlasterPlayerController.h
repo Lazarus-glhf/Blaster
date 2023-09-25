@@ -40,6 +40,8 @@ public:
 	FHighPingDelegate HighPingDelegate;
 
 	void BroadCastElim(APlayerState* Attacker, APlayerState* Victim);
+
+	void ApplyingDamage(float Damage);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -95,6 +97,9 @@ protected:
 
 	UFUNCTION(Client, Reliable)
 	void ClientElimAnnouncement(APlayerState* Attacker, APlayerState* Victim);
+
+	UFUNCTION(Client, Reliable)
+	void ClientApplyingDamage(float Damage);
 	
 private:
 	UPROPERTY()

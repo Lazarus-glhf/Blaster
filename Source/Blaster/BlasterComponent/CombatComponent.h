@@ -55,6 +55,8 @@ public:
 	void PickupAmmo(EWeaponType WeaponType, int32 AmmoAmount);
 
 	bool bLocallyReloading = false;
+
+	void PlayHitSound();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -252,6 +254,9 @@ private:
 	void UpdateAmmoValues();
 	void UpdateShotgunAmmoValues();
 	void UpdateHUDGrenades();
+
+	UPROPERTY(EditAnywhere)
+	class USoundCue* HitSound;
 
 public:
 	FORCEINLINE int32 GetGrenades() const { return Grenades; }
