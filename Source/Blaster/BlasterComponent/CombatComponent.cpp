@@ -803,7 +803,7 @@ void UCombatComponent::UpdateHUDGrenades()
 
 bool UCombatComponent::ShouldSwapWeapons()
 {
-	return (EquippedWeapon != nullptr && SecondaryWeapon != nullptr);
+	return EquippedWeapon != nullptr && SecondaryWeapon != nullptr && !bAiming;
 }
 
 void UCombatComponent::ShowAttachedGrenade(bool bShowGrenade)
