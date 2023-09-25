@@ -13,6 +13,9 @@ public:
 	AWeaponSpawnPoint();
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void StartSpawnPickupTimer();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -25,12 +28,12 @@ protected:
 	void SpawnWeapon();
 	void SpawnWeaponTimerFinished();
 
-	UFUNCTION()
-	void StartSpawnPickupTimer(AActor* DestroyedActor);
-
 private:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Pad;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* PadEffect;
 	
 	FTimerHandle SpawnWeaponTimer;
 

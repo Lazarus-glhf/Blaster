@@ -11,6 +11,7 @@
 #include "Animation/AnimationAsset.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Blaster/BlasterComponent/CombatComponent.h"
+#include "Blaster/Pickups/WeaponSpawnPoint.h"
 #include "Kismet/KismetMathLibrary.h"
 
 AWeapon::AWeapon()
@@ -138,6 +139,13 @@ void AWeapon::OnEquipped()
 		{
 			OwnerController->HighPingDelegate.AddDynamic(this, &AWeapon::OnPingTooHigh);
 		}
+	}
+
+	// Clear Spawn Point Reference
+	if (SpawnPoint)
+	{
+		SpawnPoint->StartSpawnPickupTimer();
+		SpawnPoint = nullptr;
 	}
 }
 

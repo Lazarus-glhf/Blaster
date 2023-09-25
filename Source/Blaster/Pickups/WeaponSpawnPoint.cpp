@@ -3,6 +3,7 @@
 
 #include "WeaponSpawnPoint.h"
 #include "Blaster/Weapon/Weapon.h"
+#include "NiagaraComponent.h"
 
 
 // Sets default values
@@ -12,6 +13,9 @@ AWeaponSpawnPoint::AWeaponSpawnPoint()
 	bReplicates = true;
 
 	Pad = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pad"));
+	SetRootComponent(Pad);
+	PadEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("PadEffect"));
+	PadEffect->SetupAttachment(RootComponent);
 }
 
 void AWeaponSpawnPoint::BeginPlay()
@@ -29,10 +33,10 @@ void AWeaponSpawnPoint::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	CountTime += DeltaTime;
-	// if (SpawnedWeapon)
-	// {
-	// 	SpawnedWeapon->AddActorLocalRotation(FRotator(0.f, BaseTurnRate * DeltaTime, 0.f) * FMath::Abs(FMath::Sin(CountTime)));
-	// }
+	if (SpawnedWeapon)
+	{
+		SpawnedWeapon->AddActorLocalRotation(FRotator(0.f, BaseTurnRate * DeltaTime, 0.f) * FMath::Abs(FMath::Sin(CountTime)));
+	}
 }
 
 void AWeaponSpawnPoint::SpawnWeapon()
@@ -43,15 +47,16 @@ void AWeaponSpawnPoint::SpawnWeapon()
 		FVector SpawnLocation = FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + 100.f);
 		SpawnedWeapon = GetWorld()->SpawnActor<AWeapon>(PickupClasses[Selection], SpawnLocation, GetActorRotation());
 
-		// if (HasAuthority() && SpawnedWeapon)
-		// {
-		// 	SpawnedWeapon->OnDestroyed.AddDynamic(this, &AWeaponSpawnPoint::StartSpawnPickupTimer);
-		// }
+		SpawnedWeapon->InitialSpawnPoint(this);
 	}
 }
 
-void AWeaponSpawnPoint::StartSpawnPickupTimer(AActor* DestroyedActor)
+void AWeaponSpawnPoint::StartSpawnPickupTimer()
 {
+	if (SpawnedWeapon)
+	{
+		SpawnedWeapon = nullptr;
+	}
 	const float SpawnTime = FMath::FRandRange(SpawnWeaponTimeMin, SpawnWeaponTimeMax);
 	GetWorldTimerManager().SetTimer(SpawnWeaponTimer, this, &AWeaponSpawnPoint::SpawnWeaponTimerFinished, SpawnTime);
 }
