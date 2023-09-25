@@ -29,6 +29,12 @@ void ABlasterPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
 
+	if (PlayerCameraManager)
+	{
+		PlayerCameraManager->ViewPitchMin = -80.f;
+		PlayerCameraManager->ViewPitchMax = 45.f;
+	}
+
 	BlasterHUD = Cast<ABlasterHUD>(GetHUD());
 	ServerCheckMatchState();
 }

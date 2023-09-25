@@ -222,11 +222,11 @@ void ABlasterCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
-		if (PlayerController->PlayerCameraManager)
-		{
-			PlayerController->PlayerCameraManager->ViewPitchMin = -80.f;
-			PlayerController->PlayerCameraManager->ViewPitchMax = 45.f;
-		}
+		// if (PlayerController->PlayerCameraManager)
+		// {
+		// 	PlayerController->PlayerCameraManager->ViewPitchMin = -80.f;
+		// 	PlayerController->PlayerCameraManager->ViewPitchMax = 45.f;
+		// }
 	}
 	else
 	{
