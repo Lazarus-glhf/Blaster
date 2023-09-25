@@ -357,9 +357,6 @@ private:
 	 */
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeapon> DefaultWeaponClass;
-
-	UFUNCTION(Client, Unreliable)
-	void ClientApplyingDamage(ABlasterPlayerController* AttackerController, float Damage);
 	
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);

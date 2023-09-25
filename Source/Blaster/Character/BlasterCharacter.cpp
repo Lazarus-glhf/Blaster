@@ -815,33 +815,20 @@ void ABlasterCharacter::ReceiveDamage(AActor* DamagedActor, float Damage, const 
 	}
 
 	ABlasterPlayerController* AttackerController = Cast<ABlasterPlayerController>(InstigatorController);
-	if (AttackerController)
+	BlasterPlayerController = BlasterPlayerController == nullptr ? Cast<ABlasterPlayerController>(GetController()) : BlasterPlayerController;
+	if (AttackerController && BlasterPlayerController)
 	{
 		if (Health == 0.f)
 		{
 			ABlasterGameMode* BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
 			if (BlasterGameMode)
 			{
-				BlasterPlayerController = BlasterPlayerController == nullptr ? Cast<ABlasterPlayerController>(Controller) : BlasterPlayerController;
 				BlasterGameMode->PlayerEliminated(this, BlasterPlayerController, AttackerController);
 			}	
 		}
-		if (!HasAuthority())
-		{
-			ClientApplyingDamage(AttackerController, Damage);	
-		}
-		else
-		{
-			AttackerController->ApplyingDamage(Damage);
-		}
-	}
-}
+		AttackerController->ClientApplyingDamage(Damage);
 
-void ABlasterCharacter::ClientApplyingDamage_Implementation(ABlasterPlayerController* AttackerController, float Damage)
-{
-	if (AttackerController)
-	{
-		AttackerController->ApplyingDamage(Damage);
+		BlasterPlayerController->ClientReceiveDamage(Damage);
 	}
 }
 

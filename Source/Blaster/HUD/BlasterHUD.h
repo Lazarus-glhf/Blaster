@@ -58,11 +58,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	TSubclassOf<UUserWidget> HitCrosshairWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	TSubclassOf<UUserWidget> HitIndicatorWidgetClass;
+
 	void AddCharacterOverlay();
 	void AddAnnouncement();
 	void AddElimAnnouncement(const FString& Attacker, const FString& Victim);
 	void AddDamageWidget(float Damage);
 	void ShowHitCrosshair();
+	void ShowHitIndicator();
 
 protected:
 	virtual void BeginPlay() override;

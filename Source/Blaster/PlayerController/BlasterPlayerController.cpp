@@ -561,11 +561,6 @@ void ABlasterPlayerController::HandleCooldown()
 	}
 }
 
-void ABlasterPlayerController::ApplyingDamage(float Damage)
-{
-	ClientApplyingDamage(Damage);
-}
-
 void ABlasterPlayerController::ClientApplyingDamage_Implementation(float Damage)
 {
 	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
@@ -578,6 +573,15 @@ void ABlasterPlayerController::ClientApplyingDamage_Implementation(float Damage)
 		}
 		
 		BlasterHUD->ShowHitCrosshair();
+	}
+}
+
+void ABlasterPlayerController::ClientReceiveDamage_Implementation(float Damage)
+{
+	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
+	if (BlasterHUD)
+	{
+		BlasterHUD->ShowHitIndicator();
 	}
 }
 

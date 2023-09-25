@@ -125,6 +125,21 @@ void ABlasterHUD::ShowHitCrosshair()
 	}
 }
 
+void ABlasterHUD::ShowHitIndicator()
+{
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (HitIndicatorWidgetClass)
+	{
+		UUserWidget* HitIndicatorWidget = CreateWidget<UUserWidget>(PlayerController, HitIndicatorWidgetClass);
+		if (HitIndicatorWidget)
+		{
+			HitIndicatorWidget->AddToViewport();
+
+			// Handle remove in bp construct
+		}
+	}
+}
+
 void ABlasterHUD::ElimAnnouncementTimerFinished(UElimAnnouncement* MsgToRemove)
 {
 	if (MsgToRemove)
